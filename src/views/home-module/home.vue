@@ -159,7 +159,7 @@ $images: "../../assets/images/";
     }
     .main-content {
       position: relative;
-      padding: 32px 350px 0px 32px;
+      padding: 32px 40% 0px 32px;
       // background-image: url($images+"home_map.jpeg");
     }
   }

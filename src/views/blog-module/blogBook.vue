@@ -8,7 +8,7 @@
     </nav>
     <div class="main-container" ref="blogMain" @scroll="bgScroll()">
       <div class="blogs-con" id="blogs-con">
-        <el-row>
+        <el-row class="blog-row">
           <el-card>
             <div class="card-header">
               <img class="card-avatar" src="@/assets/images/logo.jpeg">
@@ -30,7 +30,7 @@
           </el-card>
           <div class="blog-footer"></div>
         </el-row>
-        <el-row>
+        <el-row class="blog-row">
           <el-card>
             <div class="card-header">
               <img class="card-avatar" src="@/assets/images/logo.jpeg">
@@ -57,7 +57,7 @@
           </el-card>
           <div class="blog-footer"></div>
         </el-row>
-        <el-row>
+        <el-row class="blog-row">
           <el-card>
             <div class="card-header">
               <img class="card-avatar" src="@/assets/images/logo.jpeg">
@@ -84,7 +84,7 @@
           </el-card>
           <div class="blog-footer"></div>
         </el-row>
-        <el-row>
+        <el-row class="blog-row">
           <el-card>
             <div class="card-header">
               <img class="card-avatar" src="@/assets/images/logo.jpeg">
@@ -111,7 +111,7 @@
           </el-card>
           <div class="blog-footer"></div>
         </el-row>
-        <el-row>
+        <el-row class="blog-row">
           <el-card>
             <div class="card-header">
               <img class="card-avatar" src="@/assets/images/logo.jpeg">
@@ -138,7 +138,7 @@
           </el-card>
           <div class="blog-footer"></div>
         </el-row>
-        <el-row>
+        <el-row class="blog-row">
           <el-card>
             <div class="card-header">
               <img class="card-avatar" src="@/assets/images/logo.jpeg">
@@ -219,7 +219,7 @@ export default {
 $images: "../../assets/images/";
 .page-container {
   height: 100vh;
-  padding: 10vh 20vh;
+  padding: 10vh 20%;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -262,6 +262,7 @@ $images: "../../assets/images/";
     margin: auto;
     z-index: 2;
     overflow-y: auto;
+    background-color: #fff;
   }
 }
 
@@ -271,6 +272,9 @@ $images: "../../assets/images/";
   .blogs-con {
     // padding: 50px;
     // max-width: 640px;
+    .blog-row {
+      margin-bottom: 20px;
+    }
     .card-header {
       display: flex;
       align-items: center;
