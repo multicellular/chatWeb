@@ -1,8 +1,17 @@
 export function getItem(key, isLocal) {
     if (isLocal) {
-        return JSON.parse(localStorage.getItem(key));
+        try {
+            return JSON.parse(localStorage.getItem(key));
+        } catch (err) {
+            return '';
+        }
+
     } else {
-        return JSON.parse(sessionStorage.getItem(key));
+        try {
+            return JSON.parse(sessionStorage.getItem(key));
+        } catch (err) {
+            return '';
+        }
     }
 }
 

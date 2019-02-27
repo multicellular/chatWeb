@@ -37,9 +37,6 @@ import { mapGetters } from "vuex";
 import image1 from "@/assets/images/home_bg.jpeg";
 import image2 from "@/assets/images/home_map.jpeg";
 export default {
-  computed: {
-    ...mapGetters(["user"])
-  },
   data() {
     return {
       regexStr: '^[^，,.。"“！! ?？]+',
@@ -96,6 +93,7 @@ export default {
     };
   },
   computed: {
+    ...mapGetters(["user"]),
     curData() {
       return this.mockData[this.curIdx] || {};
     }

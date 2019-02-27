@@ -1,5 +1,30 @@
 import http from '@/utils/http'
 
+export function signUpApi({ name, password, avator }) {
+    return http({
+        url: '/api/user/signup',
+        method: 'POST',
+        data: {
+            name,
+            password,
+            avator
+        }
+    });
+}
+
+export function signInApi({ name, password }) {
+    return http({
+        url: '/api/user/signin',
+        method: 'POST',
+        data: {
+            name,
+            password
+        }
+    });
+}
+
+
+// chatkit
 export function loginApi(userId) {
     return http({
         url: '/api/user/login',

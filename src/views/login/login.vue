@@ -2,38 +2,37 @@
   <div class="page-container" v-loading="isLoading">
     <div class="main-container">
       <div v-if="isShowLogin" class="login-container">
+        <button @click="goSignUp" class="from-btn">Go Sign up</button>
+        <img v-if="localUser.avator" :src="localUser.avator">
         <div class="from-item">
-          <span>Account</span>
-          <input placeholder="enter your account" v-model="userLoginAccount">
+          <span>name</span>
+          <input placeholder="enter your account" v-model="userSignInName">
+        </div>
+        <div class="from-item">
+          <span>password</span>
+          <input placeholder="enter your account" type="password" v-model="userSignInPassword">
         </div>
         <div class="from-item from-btn">
-          <button @click="login" class="from-btn">Login</button>
-          <button @click="signUp" class="from-btn">Sign Up</button>
+          <button @click="signIn" class="from-btn">Sign in</button>
         </div>
       </div>
       <div v-else class="sign-up-container">
+        <button class="from-btn" @click="goSignIn">Go Sign in</button>
         <div class="from-item">
-          <span>Account</span>
-          <input placeholder="enter your account" v-model="userSignUpAccount">
+          <span>name</span>
+          <input placeholder="enter your account" v-model="userSignUpName">
         </div>
         <div class="from-item">
-          <span>Nick Name</span>
-          <input placeholder="enter your nick name" v-model="userSignUpName">
+          <span>password</span>
+          <input placeholder="enter your nick name" type="password" v-model="userSignUpPassword">
         </div>
         <div class="from-item">
           <span>avatar</span>
-          <span
-            class="avatar-image"
-            @click="selectUrl = url"
-            v-for="url in mockUrls"
-            :key="url"
-            :style="{'background-image': 'url('+url+')'}"
-            :class="{selectd:selectUrl === url}"
-          ></span>
+          <input type="file" @change="getAvatorUrl" ref="fileInput">
+          <img :src="userAvatorUrl">
         </div>
         <div class="from-item">
-          <button class="from-btn" @click="createAccount">Create Account</button>
-          <button class="from-btn" @click="goLogin">Go Login</button>
+          <button class="from-btn" @click="signUp">Sign up</button>
         </div>
       </div>
     </div>
@@ -42,35 +41,34 @@
 
 <script>
 import { getItem, setItem } from "@/utils/storage";
-import { loginApi, createApi, createRoomApi } from "@/api/login";
+import { signInApi, signUpApi } from "@/api/login";
 export default {
   data() {
     return {
       isShowLogin: true,
-      userLoginAccount: "",
-      userSignUpAccount: "",
+      userSignInName: "",
+      userSignInPassword: "",
       userSignUpName: "",
+      userSignUpPassword: "",
+      userAvatorUrl: "",
       isLoading: false,
-      mockUrls: [
-        "http://www.uuwtq.com/file/image/2014/0414/13974774460233.jpg",
-        "http://www.uuwtq.com/file/image/2014/0418/13977935560153.gif",
-        "http://www.uuwtq.com/file/image/2014/0426/13985165616043.jpg",
-        "http://www.uuwtq.com/file/image/2014/0426/13985165920065.jpg",
-        "http://www.uuwtq.com/file/image/tx/1w3239936350u366979017t27.jpg"
-      ],
-      selectUrl: ""
+      localUser: {}
     };
   },
   mounted() {
-    this.userLoginAccount = getItem("userAccount", true);
+    this.localUser = getItem("userInfo", true) || {};
+    this.userSignInName = this.localUser.name;
   },
   methods: {
-    login() {
+    signIn() {
       this.isLoading = true;
-      loginApi(this.userLoginAccount)
+      signInApi({
+        name: this.userSignInName,
+        password: this.userSignInPassword
+      })
         .then(res => {
-          setItem("userAccount", this.userLoginAccount, true);
-          this.$store.commit("SET_USER_INFO", res);
+          setItem("userInfo", res.user, true);
+          this.$store.commit("SET_USER_INFO", res.user);
           this.$router.push(this.$route.query.redirect || "home");
           this.isLoading = false;
         })
@@ -79,36 +77,62 @@ export default {
           this.isLoading = false;
         });
     },
-    signUp() {
+    goSignUp() {
       this.isShowLogin = false;
     },
-    goLogin() {
+    goSignIn() {
       this.isShowLogin = true;
     },
-    createAccount() {
+    getAvatorUrl(e) {
+      const file = e.target.files[0];
+      const filePath = this.$refs.fileInput.value;
+      if (file) {
+        const typeIdx = filePath.lastIndexOf(".");
+        const fileType =
+          typeIdx > -1
+            ? filePath.substring(typeIdx + 1, filePath.length).toLowerCase()
+            : "";
+        //判断上传的附件是否为图片
+        if (["jpg", "jpeg", "bmp", "png", "gif"].indexOf(fileType) < 0) {
+          this.$message({
+            message: "请选择图片格式！",
+            type: "error"
+          });
+          this.$refs.fileInput.value = "";
+          return;
+        }
+        // 限制上传图片大小
+        const fileSize = file.size / 1024;
+        if (fileSize > 1024) {
+          this.$message({
+            message: "图片大小不能超过1MB！",
+            type: "error"
+          });
+          this.$refs.fileInput.value = "";
+          return;
+        }
+
+        // this.file = file;
+        const reader = new FileReader();
+        const that = this;
+        reader.readAsDataURL(file);
+        reader.onload = function() {
+          that.$refs.fileInput.value = "";
+          that.userAvatorUrl = reader.result;
+        };
+      }
+      this.$refs.fileInput.value = "";
+    },
+    signUp() {
       this.isLoading = true;
-      createApi({
-        userId: this.userSignUpAccount,
-        nickName: this.userSignUpName,
-        avatarURL:
-          this.selectUrl ||
-          // "http://www.uuwtq.com/file/image/2014/0823/14087671057534.jpg",
-          "http://www.uuwtq.com/file/image/2014/0414/13974774460233.jpg",
-          // customData: { isRobot: true }
+      signUpApi({
+        name: this.userSignUpName,
+        password: this.userSignUpPassword,
+        avator: this.userAvatorUrl
       })
         .then(res => {
+          console.log(res);
           this.isLoading = false;
-          setItem("userAccount", this.userLoginAccount, true);
-          if (res.id) {
-            createRoomApi({
-              userId: "ROBOT",
-              roomName: "机器人房间",
-              userIds: [res.id],
-              isPrivate: true,
-              customData: { isRobotRoom: true }
-            });
-          }
-          this.goLogin();
         })
         .catch(err => {
           console.log(err);
@@ -133,6 +157,7 @@ $images: "../../assets/images/";
     padding: 70px 20px;
     background-color: #fff;
     display: flex;
+    flex-direction: column;
     .from-item {
       padding: 15px 0px;
       button {
@@ -162,12 +187,6 @@ $images: "../../assets/images/";
         // }
       }
     }
-  }
-  .login-container {
-    justify-content: space-around;
-  }
-  .sign-up-container {
-    flex-direction: column;
   }
 }
 </style>

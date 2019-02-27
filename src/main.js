@@ -13,6 +13,14 @@ import 'element-ui/lib/theme-chalk/index.css';
 import '@/assets/styles/index.scss'
 import 'nprogress/nprogress.css'; // progress bar style
 import App from './App.vue'
+//引入svg组件
+import IconSvg from '@/components/icon-svg'
+
+//全局注册icon-svg
+Vue.component('icon-svg', IconSvg)
+const requireAll = requireContext => requireContext.keys().map(requireContext)
+const req = require.context('@/assets/icons', true, /\.svg$/)
+requireAll(req)
 
 Vue.use(VueI18n);
 Vue.use(Router);

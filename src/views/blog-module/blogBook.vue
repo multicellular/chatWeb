@@ -5,187 +5,315 @@
       <i class="el-icon-menu"></i>
       <span class="nav-menu" @click="$router.push('/chat')">chat</span>
       <span class="nav-menu" @click="$router.push('/home')">home</span>
+      <div>
+        <button @click="clickPostBlog">postBlog</button>
+      </div>
     </nav>
     <div class="main-container" ref="blogMain" @scroll="bgScroll()">
       <div class="blogs-con" id="blogs-con">
-        <el-row class="blog-row">
+        <el-row class="blog-row" v-for="blog in blogs" :key="blog.id">
           <el-card>
-            <div class="card-header">
-              <img class="card-avatar" src="@/assets/images/logo.jpeg">
-              <div class="card-title-con">
-                <div class="card-subtitle">Card Subtitle</div>
-                <div class="card-title">Card Title</div>
+            <div class="card-content">
+              <div class="blog-header">
+                <img class="card-avatar" :src="blog.uavator">
+                <div class="card-title-con">
+                  <div class="card-title">{{blog.uname}}</div>
+                  <div class="card-subtitle">{{blog.moment}}</div>
+                </div>
+              </div>
+              <div class="forward-comment" v-if="blog.forwardObj && blog.forwardObj.source_id">
+                <p class="card-title">{{blog.forwardObj.forward_comment}}</p>
+              </div>
+              <div
+                class="blog-content"
+                :class="{'is-forward': blog.forwardObj && blog.forwardObj.source_id}"
+              >
+                <div class="card-text">
+                  <span
+                    class="card-text-name"
+                    v-if="blog.forwardObj && blog.forwardObj.source_id"
+                  >{{'@'+blog.forwardObj.source_uname}}</span>
+                  <span>{{blog.content}}</span>
+                </div>
+                <div class="card-image-con">
+                  <div class="card-image">
+                    <img v-for="image in blog.images" :key="image" :src="image">
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="card-content-con">
-              <p
-                class="card-text"
-              >Keep close to Nature's heart... and break clear away, once in awhile, and climb a mountain or spend a week in the woods. Wash your spirit clean.</p>
-              <div class="card-image-con">
-                <div class="card-image">
-                  <img src="@/assets/images/login_bg.png">
+            <div class="card-footer">
+              <span>
+                <icon-svg iconClass="post_blog" @click.native="clickForwardBlog(blog)"></icon-svg>
+                <span class="icon-number">{{blog.forwards}}</span>
+              </span>
+              <span>
+                <!-- 弹窗形式 -->
+                <!-- <icon-svg iconClass="comment" @click.native="clickGetComments(blog)"></icon-svg> -->
+                <!-- 展开形式 -->
+                <icon-svg iconClass="comment" @click.native="showBlogComments(blog)"></icon-svg>
+                <span class="icon-number">{{blog.comments}}</span>
+              </span>
+              <span>
+                <icon-svg iconClass="share"></icon-svg>
+                <!-- <span class="icon-number">{{blog.shares}}</span> -->
+              </span>
+            </div>
+            <div
+              class="card-comments"
+              v-show="blog.isShowBlogComments"
+              v-loading="blog.isShowCommentsLoading"
+            >
+              <div>
+                content
+                <textarea v-model="blog.blogCommentContent"></textarea>
+                <button @click="postBlogComment(blog)">post</button>
+              </div>
+              <div class="blog-comments">
+                <div class="comment" v-for="comment in blog.blogComments" :key="comment.id">
+                  <div class="comment-header">
+                    <img :src="comment.uavator">
+                    <span>
+                      <span class="comment-uname">{{comment.uname}}</span>
+                      <span class="comment-moment">{{comment.moment}}</span>
+                    </span>
+                  </div>
+                  <div class="comment-content">{{comment.content}}</div>
                 </div>
               </div>
             </div>
           </el-card>
-          <div class="blog-footer"></div>
-        </el-row>
-        <el-row class="blog-row">
-          <el-card>
-            <div class="card-header">
-              <img class="card-avatar" src="@/assets/images/logo.jpeg">
-              <div class="card-title-con">
-                <div class="card-subtitle">Card Subtitle</div>
-                <div class="card-title">Card Title</div>
-              </div>
-            </div>
-            <div class="card-content-con">
-              <p
-                class="card-text"
-              >This is content, without any paragraph or header tags, within an ion-card-content element.</p>
-              <div class="card-image-con">
-                <div class="card-image">
-                  <img src="@/assets/images/login_bg.png">
-                </div>
-                <div class="card-image">
-                  <img src="@/assets/images/home_bg.jpeg">
-                </div>
-                <!-- <img class="card-image" src="@/assets/images/login_bg.png">
-                <img class="card-image" src="@/assets/images/home_bg.jpeg">-->
-              </div>
-            </div>
-          </el-card>
-          <div class="blog-footer"></div>
-        </el-row>
-        <el-row class="blog-row">
-          <el-card>
-            <div class="card-header">
-              <img class="card-avatar" src="@/assets/images/logo.jpeg">
-              <div class="card-title-con">
-                <div class="card-subtitle">Card Subtitle</div>
-                <div class="card-title">Card Title</div>
-              </div>
-            </div>
-            <div class="card-content-con">
-              <p
-                class="card-text"
-              >This is content, without any paragraph or header tags, within an ion-card-content element.</p>
-              <div class="card-image-con">
-                <div class="card-image">
-                  <img src="@/assets/images/login_bg.png">
-                </div>
-                <div class="card-image">
-                  <img src="@/assets/images/home_bg.jpeg">
-                </div>
-                <!-- <img class="card-image" src="@/assets/images/login_bg.png">
-                <img class="card-image" src="@/assets/images/home_bg.jpeg">-->
-              </div>
-            </div>
-          </el-card>
-          <div class="blog-footer"></div>
-        </el-row>
-        <el-row class="blog-row">
-          <el-card>
-            <div class="card-header">
-              <img class="card-avatar" src="@/assets/images/logo.jpeg">
-              <div class="card-title-con">
-                <div class="card-subtitle">Card Subtitle</div>
-                <div class="card-title">Card Title</div>
-              </div>
-            </div>
-            <div class="card-content-con">
-              <p
-                class="card-text"
-              >This is content, without any paragraph or header tags, within an ion-card-content element.</p>
-              <div class="card-image-con">
-                <div class="card-image">
-                  <img src="@/assets/images/login_bg.png">
-                </div>
-                <div class="card-image">
-                  <img src="@/assets/images/home_bg.jpeg">
-                </div>
-                <!-- <img class="card-image" src="@/assets/images/login_bg.png">
-                <img class="card-image" src="@/assets/images/home_bg.jpeg">-->
-              </div>
-            </div>
-          </el-card>
-          <div class="blog-footer"></div>
-        </el-row>
-        <el-row class="blog-row">
-          <el-card>
-            <div class="card-header">
-              <img class="card-avatar" src="@/assets/images/logo.jpeg">
-              <div class="card-title-con">
-                <div class="card-subtitle">Card Subtitle</div>
-                <div class="card-title">Card Title</div>
-              </div>
-            </div>
-            <div class="card-content-con">
-              <p
-                class="card-text"
-              >This is content, without any paragraph or header tags, within an ion-card-content element.</p>
-              <div class="card-image-con">
-                <div class="card-image">
-                  <img src="@/assets/images/login_bg.png">
-                </div>
-                <div class="card-image">
-                  <img src="@/assets/images/home_bg.jpeg">
-                </div>
-                <!-- <img class="card-image" src="@/assets/images/login_bg.png">
-                <img class="card-image" src="@/assets/images/home_bg.jpeg">-->
-              </div>
-            </div>
-          </el-card>
-          <div class="blog-footer"></div>
-        </el-row>
-        <el-row class="blog-row">
-          <el-card>
-            <div class="card-header">
-              <img class="card-avatar" src="@/assets/images/logo.jpeg">
-              <div class="card-title-con">
-                <div class="card-subtitle">Card Subtitle</div>
-                <div class="card-title">Card Title</div>
-              </div>
-            </div>
-            <div class="card-content-con">
-              <p
-                class="card-text"
-              >This is content, without any paragraph or header tags, within an ion-card-content element.</p>
-              <div class="card-image-con">
-                <div class="card-image">
-                  <img src="@/assets/images/login_bg.png">
-                </div>
-                <div class="card-image">
-                  <img src="@/assets/images/home_bg.jpeg">
-                </div>
-                <!-- <img class="card-image" src="@/assets/images/login_bg.png">
-                <img class="card-image" src="@/assets/images/home_bg.jpeg">-->
-              </div>
-            </div>
-          </el-card>
-          <div class="blog-footer"></div>
         </el-row>
       </div>
     </div>
+    <el-dialog :visible.sync="isPostBlog">
+      <div class="postBlogDialog">
+        <!-- <div>
+          title
+          <input v-model="blogFromData.title">
+        </div>-->
+        <div>
+          content
+          <textarea v-model="blogFromData.content"></textarea>
+        </div>
+        <div>
+          <div>
+            <img v-for="image in uploadImages" :key="image" :src="image">
+          </div>images
+          <input type="file" @change="uploadImage">
+        </div>
+        <div>
+          <button @click="postBlog">post</button>
+        </div>
+      </div>
+    </el-dialog>
+    <el-dialog :visible.sync="isPostComment">
+      <div class="postCommentDialog">
+        <div>
+          content
+          <textarea v-model="commentContent"></textarea>
+        </div>
+        <div>
+          <button @click="postComment">post</button>
+        </div>
+      </div>
+    </el-dialog>
+    <el-dialog :visible.sync="isShowComments">
+      <div class="blog-comments">
+        <div class="comment" v-for="comment in comments" :key="comment.id">
+          <span>{{comment.uname}}</span>
+          <img :src="comment.uavator">
+          <p>{{comment.content}}</p>
+        </div>
+      </div>
+      <div>
+        <button @click="clickPostComment()">postComment</button>
+      </div>
+    </el-dialog>
+    <el-dialog :visible.sync="isForwardBlog">
+      <div class="forward-blog">
+        <div>
+          comment
+          <textarea v-model="forwardBlogComment"></textarea>
+        </div>
+        <div class="card-content" v-if="selectBlog">
+          <p class="card-title">{{selectBlog.title}}</p>
+          <p class="card-text">{{selectBlog.content}}</p>
+          <div class="card-image-con">
+            <div class="card-image">
+              <img v-for="image in selectBlog.images" :key="image" :src="image">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <button @click="forwardBlog()">forward</button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
 import html2canvas from "html2canvas";
+import {
+  getBlogsApi,
+  getCommentsApi,
+  postBlogApi,
+  postCommentApi
+} from "@/api/blog";
 export default {
   data() {
     return {
-      bgStyle: {}
+      bgStyle: {},
+      blogs: [],
+      comments: [],
+      blogFromData: {},
+      uploadImages: [],
+      commentContent: [],
+      selectBlog: {},
+      isPostComment: false,
+      isPostBlog: false,
+      isForwardBlog: false,
+      isShowComments: false,
+      forwardBlogComment: ""
     };
   },
   computed: {
     ...mapGetters(["user"])
   },
   mounted() {
-    this.getBgImg();
+    // this.getBgImg();
+    this.initPage();
   },
   methods: {
+    initPage() {
+      getBlogsApi().then(({ blogs }) => {
+        blogs.forEach(blog => {
+          blog.images = blog.images ? blog.images.split(",") : "";
+        });
+        this.blogs = blogs;
+      });
+    },
+    clickPostBlog() {
+      this.isPostBlog = true;
+    },
+    postBlog() {
+      const { title, content } = this.blogFromData;
+      const { avator: uavator, name: uname, id: uid } = this.user.userInfo;
+      postBlogApi({
+        title,
+        content,
+        images: this.uploadImages,
+        uavator,
+        uname,
+        uid
+      }).then(({ blog }) => {
+        blog.moment = blog.moment ? blog.moment : Date.now();
+        blog.images = blog.images ? blog.images.split(",") : "";
+        this.blogs.push(blog);
+        this.isPostBlog = false;
+      });
+    },
+    clickForwardBlog(blog) {
+      this.isForwardBlog = true;
+      this.selectBlog = blog;
+    },
+    forwardBlog() {
+      // forwardObj={ source_uname, source_uid, source_uavator, forward_comment, source_id }
+      const {
+        title,
+        content,
+        images,
+        id: source_id,
+        uname: source_uname,
+        uavator: source_uavator,
+        uid: source_uid
+      } = this.selectBlog;
+      const { avator: uavator, name: uname, id: uid } = this.user.userInfo;
+      postBlogApi({
+        title,
+        content,
+        images: images ? images.join(",") : "", // iamges数据库存储为string，本地展示为array
+        uavator,
+        uname,
+        uid,
+        forwardObj: {
+          source_id,
+          source_uname,
+          source_uavator,
+          source_uid,
+          forward_comment: this.forwardBlogComment
+        }
+      }).then(({ blog }) => {
+        blog.moment = blog.moment ? blog.moment : Date.now();
+        blog.images = blog.images ? blog.images.split(",") : "";
+        this.blogs.push(blog);
+        this.isForwardBlog = false;
+        this.selectBlog.forwards = parseInt(this.selectBlog.forwards) + 1;
+      });
+    },
+    clickGetComments(blog) {
+      this.isShowComments = true;
+      this.selectBlog = blog;
+      getCommentsApi(blog.id).then(({ comments }) => {
+        this.comments = comments;
+      });
+    },
+    clickPostComment() {
+      this.isPostComment = true;
+    },
+    postComment() {
+      const blogid = this.selectBlog.id;
+      const { avator: uavator, name: uname, id: uid } = this.user.userInfo;
+      postCommentApi({
+        blogid,
+        content: this.commentContent,
+        uname,
+        uid,
+        uavator
+      }).then(({ comment }) => {
+        comment.moment = Data.now();
+        this.comments.push(comment);
+        this.selectBlog.comments = parseInt(this.selectBlog.comments) + 1;
+        this.isPostComment = false;
+      });
+    },
+    showBlogComments(blog) {
+      this.$set(blog, "isShowBlogComments", !blog.isShowBlogComments);
+      if (blog.isShowBlogComments) {
+        this.$set(blog, "isShowCommentsLoading", true);
+        getCommentsApi(blog.id).then(({ comments }) => {
+          blog.blogComments = comments;
+          this.$set(blog, "isShowCommentsLoading", false);
+        });
+      }
+    },
+    postBlogComment(blog) {
+      const { avator: uavator, name: uname, id: uid } = this.user.userInfo;
+      postCommentApi({
+        blogid: blog.id,
+        content: blog.blogCommentContent,
+        uname,
+        uid,
+        uavator
+      }).then(({ comment }) => {
+        comment.moment = Date.now();
+        blog.blogComments.push(comment);
+        blog.comments = parseInt(blog.comments) + 1;
+        blog.blogCommentContent = "";
+      });
+    },
+    uploadImage(e) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      const _this = this;
+      reader.onload = function() {
+        _this.uploadImages.push(reader.result);
+      };
+      e.target.value = "";
+    },
     getBgImg() {
       html2canvas(document.getElementById("blogs-con"), {
         logging: false
@@ -259,60 +387,90 @@ $images: "../../assets/images/";
   }
   .main-container {
     max-width: 700px;
+    width: 100%;
     margin: auto;
     z-index: 2;
     overflow-y: auto;
+    overflow-x: hidden;
     background-color: #fff;
+  }
+  .postBlogDialog {
+    background-color: #fff;
+    z-index: 2;
+  }
+  .postCommentDialog {
+    background-color: #fff;
+    z-index: 2;
   }
 }
 
 .main-container {
-  // height: 100%;
-
   .blogs-con {
-    // padding: 50px;
-    // max-width: 640px;
     .blog-row {
       margin-bottom: 20px;
     }
-    .card-header {
-      display: flex;
-      align-items: center;
-      .card-avatar {
-        width: 40px;
-        margin-right: 12px;
-      }
-      .card-subtitle {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: #2e3135;
-      }
-      .card-title {
-        font-size: 13px;
-        color: #8a9aa9;
-      }
-    }
-    .card-text {
-      font-size: 15px;
-      line-height: 1.6;
-      white-space: pre-wrap;
-      color: #17181a;
-    }
-    .card-image-con {
-      display: flex;
-      align-items: center;
-      max-width: 100%;
-      flex-wrap: nowrap;
-      .card-image {
-        flex: 1;
-        overflow: hidden;
-        margin: 0 8px;
-        img {
-          width: 100%;
+    .card-content {
+      .blog-header {
+        display: flex;
+        align-items: center;
+        .card-avatar {
+          width: 40px;
+          margin-right: 12px;
         }
-        // max-width: 100%;
-        // width: 800px;
-        // height: 100px;
+        .card-title {
+          font-size: 1.25rem;
+          font-weight: 600;
+          color: #2e3135;
+        }
+        .card-subtitle {
+          font-size: 13px;
+          color: #8a9aa9;
+        }
+      }
+      .blog-content {
+        padding: 12px 0px;
+        min-height: 100px;
+        &.is-forward {
+          background-color: #f1f4f7;
+          padding-left: 12px;
+          padding-right: 12px;
+        }
+        .card-text {
+          font-size: 15px;
+          line-height: 1.6;
+          white-space: pre-wrap;
+          color: #17181a;
+          .card-text-name {
+            color: aqua;
+          }
+        }
+        .card-image-con {
+          display: flex;
+          align-items: center;
+          max-width: 100%;
+          flex-wrap: nowrap;
+          .card-image {
+            flex: 1;
+            overflow: hidden;
+            margin: 0 8px;
+            img {
+              width: 100%;
+            }
+            // max-width: 100%;
+            // width: 800px;
+            // height: 100px;
+          }
+        }
+      }
+    }
+    .card-footer {
+      margin-top: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      .icon-number {
+        font-size: 10px;
+        margin-left: 2px;
       }
     }
   }

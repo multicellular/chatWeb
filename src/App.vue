@@ -16,7 +16,7 @@ export default {
     }
   },
   created() {
-    this.autoLogin();
+    // this.autoLogin();
   },
   methods: {
     autoLogin() {

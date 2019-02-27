@@ -7,7 +7,7 @@
           <li @click="goRoute(navs['blog'].path)">{{navs['blog'].name}}</li>
         </ul>
         <div class="nav-other">
-          <span class="other-item" v-if="user.hasInfo">{{user.userInfo.name}}</span>
+          <span class="other-item" v-if="user.hasInfo">{{user.userInfo && user.userInfo.name}}</span>
           <span class="other-item" v-else @click="goRoute('/login')">登陆</span>
           <span class="other-item" v-if="user.hasInfo" @click="signOut('/home')">退出</span>
         </div>
