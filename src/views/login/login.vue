@@ -2,8 +2,8 @@
   <div class="page-container" v-loading="isLoading">
     <div class="main-container">
       <div v-if="isShowLogin" class="login-container">
+        <img class="avator-image" v-if="localUser.avator" :src="localUser.avator">
         <button @click="goSignUp" class="from-btn">Go Sign up</button>
-        <img v-if="localUser.avator" :src="localUser.avator">
         <div class="from-item">
           <span>name</span>
           <input placeholder="enter your account" v-model="userSignInName">
@@ -29,7 +29,7 @@
         <div class="from-item">
           <span>avatar</span>
           <input type="file" @change="getAvatorUrl" ref="fileInput">
-          <img :src="userAvatorUrl">
+          <img :src="userAvatorUrl" width="50px">
         </div>
         <div class="from-item">
           <button class="from-btn" @click="signUp">Sign up</button>
@@ -61,6 +61,9 @@ export default {
   },
   methods: {
     signIn() {
+      if (!this.userSignInName || !this.userSignInPassword) {
+        return;
+      }
       this.isLoading = true;
       signInApi({
         name: this.userSignInName,
@@ -124,6 +127,9 @@ export default {
       this.$refs.fileInput.value = "";
     },
     signUp() {
+      if (!this.userSignUpName || !this.userSignUpPassword) {
+        return;
+      }
       this.isLoading = true;
       signUpApi({
         name: this.userSignUpName,
@@ -154,7 +160,7 @@ $images: "../../assets/images/";
   .sign-up-container {
     max-width: 500px;
     margin: 200px auto 0px;
-    padding: 70px 20px;
+    padding: 20px 30px;
     background-color: #fff;
     display: flex;
     flex-direction: column;
@@ -167,26 +173,17 @@ $images: "../../assets/images/";
       span {
         margin-right: 12px;
       }
-      .avatar-image {
-        width: 30px;
-        height: 30px;
-        background-size: cover;
-        position: relative;
-        display: inline-block;
-        border-radius: 50%;
-        &.selectd {
-          width: 50px;
-          height: 50px;
-        }
-        // &.selectd::before {
-        //   content: "☑";
-        //   right: -3px;
-        //   top: -7px;
-        //   color: #00ff26;
-        //   position: absolute;
-        // }
-      }
     }
+  }
+
+  .avator-image {
+    width: 100px;
+    height: 100px;
+    background-color: #fff;
+    border-radius: 50%;
+    align-self: center;
+    margin-top: -70px;
+    margin-bottom: 20px;
   }
 }
 </style>

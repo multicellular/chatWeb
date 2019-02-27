@@ -35,9 +35,14 @@
                   >{{'@'+blog.forwardObj.source_uname}}</span>
                   <span>{{blog.content}}</span>
                 </div>
-                <div class="card-image-con">
-                  <div class="card-image">
-                    <img v-for="image in blog.images" :key="image" :src="image">
+                <div class="card-image-con" v-if="blog.images">
+                  <div class="card-image" v-for="image in blog.images.slice(0,4)" :key="image">
+                    <img :src="image">
+                  </div>
+                </div>
+                <div class="card-image-con" v-if="blog.images && blog.images.length > 4">
+                  <div class="card-image" v-for="image in blog.images.slice(4,8)" :key="image">
+                    <img :src="image">
                   </div>
                 </div>
               </div>
@@ -64,19 +69,18 @@
               v-show="blog.isShowBlogComments"
               v-loading="blog.isShowCommentsLoading"
             >
-              <div>
-                content
-                <textarea v-model="blog.blogCommentContent"></textarea>
+              <div class="post-comment">
+                <textarea class="edit-textarea" v-model="blog.blogCommentContent"></textarea>
                 <button @click="postBlogComment(blog)">post</button>
               </div>
               <div class="blog-comments">
                 <div class="comment" v-for="comment in blog.blogComments" :key="comment.id">
                   <div class="comment-header">
-                    <img :src="comment.uavator">
-                    <span>
-                      <span class="comment-uname">{{comment.uname}}</span>
-                      <span class="comment-moment">{{comment.moment}}</span>
-                    </span>
+                    <img class="comment-avatar" :src="comment.uavator">
+                    <div>
+                      <div class="comment-uname">{{comment.uname}}</div>
+                      <div class="comment-moment">{{comment.moment}}</div>
+                    </div>
                   </div>
                   <div class="comment-content">{{comment.content}}</div>
                 </div>
@@ -86,24 +90,34 @@
         </el-row>
       </div>
     </div>
-    <el-dialog :visible.sync="isPostBlog">
+    <el-dialog :visible.sync="isPostBlog" title="postBlogDialog">
       <div class="postBlogDialog">
+        <button @click="postBlog">post</button>
         <!-- <div>
           title
           <input v-model="blogFromData.title">
         </div>-->
         <div>
-          content
-          <textarea v-model="blogFromData.content"></textarea>
+          <textarea class="edit-textarea" v-model="blogFromData.content"></textarea>
         </div>
-        <div>
-          <div>
-            <img v-for="image in uploadImages" :key="image" :src="image">
-          </div>images
-          <input type="file" @change="uploadImage">
+        <div class="images-con">
+          <div class="image-con" v-for="(image, idx) in uploadImages" :key="image">
+            <img class="upload-image" :src="image">
+            <img
+              class="delete-image"
+              @click="deleteUploadImage(idx)"
+              src="@/assets/images/delete.png"
+            >
+          </div>
         </div>
-        <div>
-          <button @click="postBlog">post</button>
+        <div class="btns-con">
+          <input
+            class="upload-input"
+            type="file"
+            @change="uploadImage"
+            v-show="uploadImages.length < 8"
+          >
+          <div class="emoji-con"></div>
         </div>
       </div>
     </el-dialog>
@@ -130,24 +144,32 @@
         <button @click="clickPostComment()">postComment</button>
       </div>
     </el-dialog>
-    <el-dialog :visible.sync="isForwardBlog">
-      <div class="forward-blog">
+    <el-dialog :visible.sync="isForwardBlog" :title="'Forward Blog'">
+      <div class="forwardBlogDialog blogs-con">
+        <button class="forward-btn" @click="forwardBlog()">forward</button>
         <div>
-          comment
-          <textarea v-model="forwardBlogComment"></textarea>
+          <textarea class="edit-textarea" v-model="forwardBlogComment"></textarea>
         </div>
         <div class="card-content" v-if="selectBlog">
-          <p class="card-title">{{selectBlog.title}}</p>
-          <p class="card-text">{{selectBlog.content}}</p>
-          <div class="card-image-con">
-            <div class="card-image">
-              <img v-for="image in selectBlog.images" :key="image" :src="image">
+          <!-- <div class="blog-header">
+            <p class="card-title">{{selectBlog.title}}</p>
+          </div>-->
+          <div class="blog-content">
+            <div class="card-text">
+              <span>{{selectBlog.content}}</span>
+            </div>
+            <div class="card-image-con" v-if="selectBlog.images">
+              <div class="card-image" v-for="image in selectBlog.images.slice(0,4)" :key="image">
+                <img :src="image">
+              </div>
+            </div>
+            <div class="card-image-con" v-if="selectBlog.images && selectBlog.images.length > 4">
+              <div class="card-image" v-for="image in selectBlog.images.slice(4,8)" :key="image">
+                <img :src="image">
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div>
-        <button @click="forwardBlog()">forward</button>
       </div>
     </el-dialog>
   </div>
@@ -314,6 +336,9 @@ export default {
       };
       e.target.value = "";
     },
+    deleteUploadImage(idx) {
+      this.uploadImages.splice(idx, 1);
+    },
     getBgImg() {
       html2canvas(document.getElementById("blogs-con"), {
         logging: false
@@ -345,6 +370,11 @@ export default {
 
 <style lang="scss" scoped>
 $images: "../../assets/images/";
+@media only screen and (max-width: 1000px) {
+  .page-container {
+    padding: 0 !important;
+  }
+}
 .page-container {
   height: 100vh;
   padding: 10vh 20%;
@@ -397,80 +427,153 @@ $images: "../../assets/images/";
   .postBlogDialog {
     background-color: #fff;
     z-index: 2;
+    .edit-textarea {
+      resize: none;
+      height: 80px;
+      width: 100%;
+      margin: 8px;
+    }
+    .upload-input {
+      width: 62px;
+    }
+    .images-con {
+      display: flex;
+      flex-wrap: wrap;
+      max-width: 100%;
+      .image-con {
+        position: relative;
+        padding: 5px;
+        border: 1px solid #f1e3e3;
+        margin: 0px 8px;
+        width: 150px;
+        height: 200px;
+        .upload-image {
+          max-height: 200px;
+          min-height: 40px;
+          max-width: 100%;
+        }
+        .delete-image {
+          width: 20px;
+          position: absolute;
+          width: 20px;
+          right: 0px;
+          top: 0px;
+          z-index: 2;
+        }
+      }
+    }
+    .btns-con {
+      margin: 8px;
+    }
   }
-  .postCommentDialog {
-    background-color: #fff;
-    z-index: 2;
+}
+.forwardBlogDialog {
+  .forward-btn {
+    float: right;
+    margin-bottom: 12px;
+  }
+  .edit-textarea {
+    resize: none;
+    height: 60px;
+    width: 100%;
   }
 }
 
-.main-container {
-  .blogs-con {
-    .blog-row {
-      margin-bottom: 20px;
-    }
-    .card-content {
-      .blog-header {
-        display: flex;
-        align-items: center;
-        .card-avatar {
-          width: 40px;
-          margin-right: 12px;
-        }
-        .card-title {
-          font-size: 1.25rem;
-          font-weight: 600;
-          color: #2e3135;
-        }
-        .card-subtitle {
-          font-size: 13px;
-          color: #8a9aa9;
-        }
-      }
-      .blog-content {
-        padding: 12px 0px;
-        min-height: 100px;
-        &.is-forward {
-          background-color: #f1f4f7;
-          padding-left: 12px;
-          padding-right: 12px;
-        }
-        .card-text {
-          font-size: 15px;
-          line-height: 1.6;
-          white-space: pre-wrap;
-          color: #17181a;
-          .card-text-name {
-            color: aqua;
-          }
-        }
-        .card-image-con {
-          display: flex;
-          align-items: center;
-          max-width: 100%;
-          flex-wrap: nowrap;
-          .card-image {
-            flex: 1;
-            overflow: hidden;
-            margin: 0 8px;
-            img {
-              width: 100%;
-            }
-            // max-width: 100%;
-            // width: 800px;
-            // height: 100px;
-          }
-        }
-      }
-    }
-    .card-footer {
-      margin-top: 16px;
+.blogs-con {
+  .blog-row {
+    margin-bottom: 20px;
+  }
+  .card-content {
+    .blog-header {
       display: flex;
       align-items: center;
-      justify-content: space-around;
-      .icon-number {
-        font-size: 10px;
-        margin-left: 2px;
+      .card-avatar {
+        width: 40px;
+        margin-right: 12px;
+      }
+      .card-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #2e3135;
+      }
+      .card-subtitle {
+        font-size: 13px;
+        color: #8a9aa9;
+      }
+    }
+    .blog-content {
+      // padding: 12px 0px;
+      min-height: 100px;
+      &.is-forward {
+        background-color: #f1f4f7;
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+      .card-text {
+        font-size: 15px;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        color: #17181a;
+        .card-text-name {
+          color: aqua;
+        }
+      }
+      .card-image-con {
+        display: flex;
+        align-items: center;
+        max-width: 100%;
+        flex-wrap: nowrap;
+        .card-image {
+          flex: 1;
+          // overflow: hidden;
+          margin: 0 8px;
+          img {
+            max-width: 100%;
+          }
+          // max-width: 100%;
+          // width: 800px;
+          // height: 100px;
+        }
+      }
+    }
+  }
+  .card-footer {
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    .icon-number {
+      font-size: 10px;
+      margin-left: 2px;
+    }
+  }
+  .card-comments {
+    padding: 8px 20px;
+    .post-comment {
+      display: flex;
+      .edit-textarea {
+        resize: none;
+        flex: 1;
+      }
+    }
+    .comment {
+      margin: 8px 0px;
+    }
+    .comment-header {
+      display: flex;
+      align-items: center;
+      .comment-avatar {
+        width: 40px;
+        margin-right: 12px;
+      }
+      .comment-uname {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #2e3135;
+      }
+      .comment-moment {
+        font-size: 13px;
+        color: #8a9aa9;
       }
     }
   }

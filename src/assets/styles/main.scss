@@ -47,3 +47,8 @@ $rem : 0.0625rem;
 .widget-contianer {
     
 }
+@media only screen and (max-width: 1000px) {
+    .el-dialog {
+        width: 90% !important;
+    }
+}
