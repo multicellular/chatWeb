@@ -273,7 +273,7 @@ export default {
         uid,
         uavator
       }).then(({ comment }) => {
-        comment.moment = Data.now();
+        comment.moment = Date.now();
         this.comments.push(comment);
         this.selectBlog.comments = parseInt(this.selectBlog.comments) + 1;
         this.isPostComment = false;
