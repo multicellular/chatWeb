@@ -23,6 +23,14 @@ export function signInApi({ name, password }) {
     });
 }
 
+export function infoApi() {
+    return http({
+        url: '/api/user/info',
+        method: 'GET',
+        secret: true
+    });
+}
+
 
 // chatkit
 export function loginApi(userId) {

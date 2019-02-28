@@ -70,8 +70,9 @@ export default {
         password: this.userSignInPassword
       })
         .then(res => {
-          setItem("userInfo", res.user, true);
-          this.$store.commit("SET_USER_INFO", res.user);
+          setItem("userInfo", res.user, true); // 无token时，本地头像展示
+          setItem("my_token", res.token, true);
+          this.$store.commit("SET_USER_INFO", res.user);  // store 存储userinfo
           this.$router.push(this.$route.query.redirect || "home");
           this.isLoading = false;
         })
@@ -139,6 +140,8 @@ export default {
         .then(res => {
           console.log(res);
           this.isLoading = false;
+          this.userSignInName = this.userSignUpName;
+          this.goSignIn();
         })
         .catch(err => {
           console.log(err);

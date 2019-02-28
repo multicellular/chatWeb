@@ -5,6 +5,7 @@ function resolve(dir) {
 }
 
 module.exports = {
+    outputDir: 'web',
     chainWebpack: config => {
         // 修改svg loader
         config.module

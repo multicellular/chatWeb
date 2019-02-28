@@ -6,29 +6,30 @@
 </template>
 
 <script>
-import { getItem } from "@/utils/storage";
-import { loginApi } from "@/api/login";
+import { getItem, setItem } from "@/utils/storage";
+import { infoApi } from "@/api/login";
 export default {
   name: "app",
-  data(){
+  data() {
     return {
       isAutoLogin: false
-    }
+    };
   },
   created() {
-    // this.autoLogin();
+    this.autoLogin();
   },
   methods: {
     autoLogin() {
-      const account = getItem("userAccount", true);
-      if (account) {
+      const token = getItem("my_token", true);
+      if (token) {
         this.isAutoLogin = true;
-        return loginApi(account)
+        return infoApi()
           .then(res => {
             this.isAutoLogin = false;
-            this.$store.commit("SET_USER_INFO", res);
-            if (this.$route.path === '/login') {
-              this.$router.push('/home');
+            setItem("userInfo", res.user, true); // 无token时，本地头像展示
+            this.$store.commit("SET_USER_INFO", res.user); // store 存储userinfo
+            if (this.$route.path === "/login") {
+              this.$router.push("/home");
             }
             return res;
           })

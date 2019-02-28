@@ -52,8 +52,8 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
   NProgress.start();
   if (to.matched.some(record => record.meta.requiredAuth)) {
-    const account = localStorage.getItem('userAccount')
-    if (account) {
+    const userInfo = localStorage.getItem('userInfo');
+    if (userInfo) {
       next();
     } else {
       next({
