@@ -1,21 +1,23 @@
 <template>
   <div class="page-container" :style="bgStyle" ref="pageContainer">
     <div class="bg-mask"></div>
-    <nav class="page-nav">
-      <i class="el-icon-menu"></i>
-      <span class="nav-menu" @click="$router.push('/chat')">chat</span>
-      <span class="nav-menu" @click="$router.push('/home')">home</span>
-      <div>
-        <button @click="clickPostBlog">postBlog</button>
-      </div>
-    </nav>
-    <div class="main-container" ref="blogMain" @scroll="bgScroll()">
-      <div class="blogs-con" id="blogs-con">
+    <div class="main-container">
+      <nav class="page-nav">
+        <i class="el-icon-menu"></i>
+        <span class="nav-menu" @click="$router.push('/chat')">chat</span>
+        <span class="nav-menu" @click="$router.push('/home')">home</span>
+        <div>
+          <button @click="clickPostBlog">postBlog</button>
+        </div>
+      </nav>
+      <div class="blogs-con" id="blogs-con" ref="blogMain" @scroll="bgScroll()">
         <el-row class="blog-row" v-for="blog in blogs" :key="blog.id">
           <el-card>
             <div class="card-content">
               <div class="blog-header">
-                <img class="card-avatar" :src="blog.uavator">
+                <div class="avatar-con">
+                  <img class="card-avatar" :src="blog.uavator">
+                </div>
                 <div class="card-title-con">
                   <div class="card-title">{{blog.uname}}</div>
                   <div class="card-subtitle">{{blog.moment}}</div>
@@ -76,7 +78,9 @@
               <div class="blog-comments">
                 <div class="comment" v-for="comment in blog.blogComments" :key="comment.id">
                   <div class="comment-header">
-                    <img class="comment-avatar" :src="comment.uavator">
+                    <div class="avatar-con">
+                      <img class="comment-avatar" :src="comment.uavator">
+                    </div>
                     <div>
                       <div class="comment-uname">{{comment.uname}}</div>
                       <div class="comment-moment">{{comment.moment}}</div>
@@ -378,8 +382,8 @@ $images: "../../assets/images/";
 .page-container {
   height: 100vh;
   padding: 10vh 20%;
-  display: flex;
-  flex-direction: column;
+  // display: flex;
+  // flex-direction: column;
   position: relative;
   background-repeat: no-repeat;
   background-size: 1000px;
@@ -396,33 +400,38 @@ $images: "../../assets/images/";
     background-image: url($images+"bg001.jpg");
     opacity: 0.95;
   }
-  .page-nav {
-    width: 100%;
-    margin: auto;
-    min-height: 60px;
-    display: flex;
-    align-items: center;
-    background-color: #fafbfcf2;
-    max-width: 700px;
-    z-index: 2;
-    .el-icon-menu {
-      font-size: 20px;
-      margin-left: 16px;
-    }
-    .nav-menu {
-      margin: 16px;
-      font-size: 20px;
-      font-weight: 500;
-    }
-  }
   .main-container {
-    max-width: 700px;
-    width: 100%;
-    margin: auto;
-    z-index: 2;
-    overflow-y: auto;
-    overflow-x: hidden;
+    // max-width: 700px;
+    height: 100%;
+    // width: 100%;
+    position: relative;
+    // margin: auto;
+    // z-index: 2;
     background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    .page-nav {
+      // width: 100%;
+      // margin: auto;
+      min-height: 60px;
+      display: flex;
+      align-items: center;
+      background-color: #fafbfcf2;
+      .el-icon-menu {
+        font-size: 20px;
+        margin-left: 16px;
+      }
+      .nav-menu {
+        margin: 16px;
+        font-size: 20px;
+        font-weight: 500;
+      }
+    }
+    .blogs-con {
+      flex: auto;
+      overflow-x: hidden;
+      overflow-y: scroll;
+    }
   }
   .postBlogDialog {
     background-color: #fff;
@@ -487,9 +496,15 @@ $images: "../../assets/images/";
     .blog-header {
       display: flex;
       align-items: center;
-      .card-avatar {
-        width: 40px;
+      .avatar-con {
         margin-right: 12px;
+        width: 40px;
+        height: 40px;
+        border-radius: 20px;
+        .card-avatar {
+          max-width: 100%;
+          max-height: 100%;
+        }
       }
       .card-title {
         font-size: 1.25rem;
@@ -562,9 +577,15 @@ $images: "../../assets/images/";
     .comment-header {
       display: flex;
       align-items: center;
-      .comment-avatar {
-        width: 40px;
+      .avatar-con {
         margin-right: 12px;
+        width: 40px;
+        height: 40px;
+        border-radius: 20px;
+        .comment-avatar {
+          max-width: 100%;
+          max-height: 100%;
+        }
       }
       .comment-uname {
         font-size: 1.25rem;

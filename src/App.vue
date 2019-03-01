@@ -8,6 +8,7 @@
 <script>
 import { getItem, setItem } from "@/utils/storage";
 import { infoApi } from "@/api/login";
+import io from 'socket.io-client';
 export default {
   name: "app",
   data() {
@@ -31,6 +32,11 @@ export default {
             if (this.$route.path === "/login") {
               this.$router.push("/home");
             }
+            const socket = io('localhost:3000');
+            socket.emit('user',res.user);
+            socket.on('hello',data=>{
+              console.log(data);
+            })
             return res;
           })
           .catch(err => {

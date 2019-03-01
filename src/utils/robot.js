@@ -1,4 +1,4 @@
-import http from '@/utils/http'
+import http from '@/utils/axiosInstance'
 // const url = 'http://www.tuling123.com/openapi/api?key=你申请的key&info=你要发的消息';
 class Robot {
     constructor(apiKey) {
