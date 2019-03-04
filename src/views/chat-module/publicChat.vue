@@ -8,15 +8,16 @@
       <div class="user-con">
         <div>房间成员：</div>
         <ul>
-          <li v-for="user in chatUsers" :key="user.id" class="user-item">
-            <img :src="user.uavator">
-            <span>{{user.uname}}</span>
+          <li v-for="user in users" :key="user.id" class="user-item">
+            <img :src="user.avatarURL">
+            <span>{{user.name}}</span>
           </li>
         </ul>
-        <button class="join-btn" @click="clickJoinRoom">邀请加入房间</button>
+        <input placeholder="enter user account" v-model="joinUserId">
+        <button class="join-btn" @click="joinRoom">邀请加入房间</button>
       </div>
       <div class="chat-content">
-        <div class="chat-content-hd">{{chatObj && (chatObj.name || chatObj.uname )}}</div>
+        <div class="chat-content-hd">{{curRoom.name}}</div>
         <div class="chat-content-bd" ref="scrollView">
           <ul>
             <li
@@ -47,147 +48,139 @@
         </div>
       </div>
     </div>
-    <el-dialog :visible.sync="isShowJoin" :title="'Join Room'">
-      <div class="friends-con">
-        <ul class="friends">
-          <li
-            class="friend"
-            v-for="user in userFriends"
-            :key="user.id"
-            :class="{unSelect:chatIds.indexOf(user.uid)>-1}"
-            @click="selectUser(user)"
-          >
-            <span>{{user.uname}}</span>
-            <icon-svg iconClass="selected" v-if="joinIds.indexOf(user.uid)>-1"></icon-svg>
-          </li>
-        </ul>
-        <button @click="joinRoom">加入群聊</button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
-import * as roomApi from "@/api/chat";
+import robot from "@/utils/robot";
 export default {
   data() {
     return {
       messages: [],
       message: "",
-      isShowJoin: false,
-      userFriends: [],
-      joinIds: [],
-      chatUsers: [],
-      isRoom: [],
-      chatObj: {}
+      isRobotRoom: false,
+      curRoom: {},
+      joinUserId: "",
+      users: []
     };
   },
   computed: {
     ...mapGetters(["user"]),
-    userInfo() {
-      return this.user.userInfo || {};
+    currentUser() {
+      return this.user.chatUser;
     },
-    chatIds() {
-      let ids = [];
-      for (let i = 0; i < this.chatUsers.length; i++) {
-        ids.push(this.chatUsers[i].uid);
+    userId() {
+      return this.user.userInfo.id;
+    },
+    userAvatars() {
+      const avatars = {};
+      let user = {};
+      const len = this.users.length;
+      for (let i = 0; i < len; i++) {
+        user = this.users[i];
+        avatars[user.id] = user.avatarURL;
       }
-      return ids;
+      return avatars;
+    },
+    userNames() {
+      const names = {};
+      let user = {};
+      const len = this.users.length;
+      for (let i = 0; i < len; i++) {
+        user = this.users[i];
+        names[user.id] = user.name;
+      }
+      return names;
     }
   },
+  filters: {},
   created() {
-    this.isRoom = this.$route.params.isRoom;
-    this.chatObj = this.$route.params.room || this.$route.params.user;
-    if (!this.chatObj) {
-      this.$router.push("/chat");
-      return;
-    }
-    if (this.isRoom) {
-      this.initRoom(this.chatObj.id);
-    } else {
-      this.chatUsers = [
-        {
-          uid: this.userInfo.id,
-          uname: this.userInfo.name,
-          uavator: this.userInfo.avator
-        },
-        {
-          uid: this.chatObj.uid,
-          uname: this.chatObj.uname,
-          uavator: this.chatObj.uavator
-        }
-      ];
+    this.curRoom = this.$route.params.room || {};
+    this.isRobotRoom =
+      this.curRoom.customData && this.curRoom.customData.isRobotRoom;
+    // 机器人聊天室，不接入chatkit，无聊天消息
+    if (this.curRoom.id) {
+      this.getMessage();
+      this.currentUser
+        .subscribeToRoom({
+          roomId: this.curRoom.id,
+          hooks: {
+            onMessage: message => {
+              const { id, senderId, attachment, text } = message;
+              if (senderId !== this.userId) {
+                // 自己发的消息，本地先发送
+                this.messages.push({
+                  senderId,
+                  attachment, //attachment为图片地址，默认优先判断
+                  text,
+                  id
+                });
+              }
+            },
+            onUserJoined: () => {},
+            onUserLeft: () => {}
+          },
+          messageLimit: 10
+        })
+        .then(room => {
+          this.users = room.users;
+          console.log(this.users);
+        })
+        .catch(err => console.log(err));
     }
   },
   methods: {
-    initRoom(roomid) {
-      roomApi.getRoomUsersApi(roomid).then(({ users }) => {
-        this.chatUsers = users;
-      });
-    },
-    getUserFriends() {
-      if (this.userFriends && this.userFriends.length > 0) {
+    getMessage() {
+      if (this.isRobotRoom) {
         return;
       }
-      roomApi.getUserFriendsApi(this.userInfo.id).then(({ friends }) => {
-        this.userFriends = friends;
-      });
-    },
-    getMessage() {},
-    clickJoinRoom() {
-      this.isShowJoin = true;
-      this.getUserFriends();
-    },
-    joinRoom() {
-      if (!this.joinIds || this.joinIds.length < 1) {
-        return;
-      }
-      if (this.isRoom) {
-        roomApi
-          .inviteRoomUsersApi({
-            roomid: this.chatObj.id,
-            uids: this.joinIds
-          })
-          .then(res => {
-            if (res.code === 0) {
-              this.chatUsers = res.users;
-            }
-          });
-      } else {
-        roomApi
-          .createRoomApi({
-            name: "群聊...",
-            desc: "",
-            ownerid: this.userInfo.id
-          })
-          .then(res => {
-            if (res.code === 0) {
-              const room = res.room;
-              this.isRoom = true;
-              this.chatObj = room;
-              roomApi
-                .inviteRoomUsersApi({
-                  roomid: room.id,
-                  uids: this.joinIds
-                })
-                .then(res => {
-                  if (res.code === 0) {
-                    this.chatUsers = res.users;
-                  }
-                });
-            }
-          });
-      }
-    },
-    selectUser(user) {
-      if (this.chatIds.indexOf(user.uid) > -1) {
-        return;
-      }
-      this.joinIds.push(user.uid);
+      this.currentUser
+        .fetchMessages({
+          roomId: this.curRoom.id,
+          // initialId: 42,
+          direction: "older",
+          limit: 30
+        })
+        .then(messages => {
+          this.messages = messages;
+          this.viewToBottom();
+          // do something with the messages
+        })
+        .catch(err => {
+          console.log(`Error fetching messages: ${err}`);
+        });
     },
     clickSendMessage() {
-      this.sendMessage();
+      if (this.isRobotRoom) {
+        this.sendMessageToRobot();
+      } else {
+        this.sendMessage();
+      }
+    },
+    sendMessageToRobot() {
+      this.messages.push({
+        senderId: this.userId,
+        text: this.message
+      });
+      this.viewToBottom();
+      // 机器人
+      robot
+        .receiveMessage(this.message)
+        .then(res => {
+          this.messages.push({
+            text: res.text,
+            senderId: "ROBOT"
+          });
+          this.viewToBottom();
+        })
+        .catch(() => {
+          this.messages.push({
+            text: "robot is gone!",
+            type: "3"
+          });
+        });
+      this.message = "";
     },
     sendMessage() {
       this.messages.push({
@@ -220,9 +213,35 @@ export default {
           this.$refs.scrollView.scrollTop = this.$refs.scrollView.scrollHeight;
         }
       });
+    },
+    joinRoom() {
+      this.currentUser
+        .addUserToRoom({
+          userId: this.joinUserId,
+          roomId: this.curRoom.id
+        })
+        .then(room => {
+          this.curRoom = room;
+          // this.users = room.users;
+        })
+        .catch(() => {});
+      this.joinUserId = "";
+    },
+    getAvatar(userId) {
+      // debugger;
+      const idx = this.users.findIndex(user => user.id === userId);
+      if (idx > -1) {
+        console.log(this.users[idx].avatarURL, "avatarURL");
+        return this.users[idx].avatarURL;
+      } else {
+        return "";
+      }
     }
   },
-  beforeDestory() {}
+  beforeDestory() {
+    this.curRoom.id &&
+      this.currentUser.roomSubscriptions[this.curRoom.id].cancel();
+  }
 };
 </script>
 
@@ -249,11 +268,6 @@ export default {
       width: 30px;
       margin-right: 8px;
     }
-  }
-}
-.friends-con {
-  .unSelect {
-    opacity: 0.8;
   }
 }
 .chat-content {

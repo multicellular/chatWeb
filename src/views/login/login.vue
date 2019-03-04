@@ -42,6 +42,7 @@
 <script>
 import { getItem, setItem } from "@/utils/storage";
 import { signInApi, signUpApi } from "@/api/login";
+import { findApplyApi, allowJoinFriendApi } from "@/api/chat";
 export default {
   data() {
     return {
@@ -70,10 +71,15 @@ export default {
         password: this.userSignInPassword
       })
         .then(res => {
-          setItem("userInfo", res.user, true); // 无token时，本地头像展示
-          setItem("my_token", res.token, true);
-          this.$store.commit("SET_USER_INFO", res.user);  // store 存储userinfo
-          this.$router.push(this.$route.query.redirect || "home");
+          if (res.code === 0) {
+            setItem("userInfo", res.user, true); // 无token时，本地头像展示
+            setItem("my_token", res.token, true);
+            this.$store.commit("SET_USER_INFO", res.user); // store 存储userinfo
+            this.$router.push(this.$route.query.redirect || "home");
+            this.getNotifys(res.id);
+          } else {
+            this.$message(res.msg);
+          }
           this.isLoading = false;
         })
         .catch(err => {
@@ -138,15 +144,53 @@ export default {
         avator: this.userAvatorUrl
       })
         .then(res => {
-          console.log(res);
+          if (res.code === 0) {
+            this.userSignInName = this.userSignUpName;
+            this.goSignIn();
+          } else {
+            this.$message(res.msg);
+          }
           this.isLoading = false;
-          this.userSignInName = this.userSignUpName;
-          this.goSignIn();
         })
         .catch(err => {
           console.log(err);
           this.isLoading = false;
         });
+    },
+    getNotifys(invitees_uid) {
+      findApplyApi({ invitees_uid }).then(({ applys }) => {
+        const len = applys && applys.length;
+        for (let i = 0; i < len; i++) {
+          const apply = applys[i];
+          const {
+            verify_message: uremark,
+            apply_uid,
+            apply_flist_id,
+            invitees_uid,
+            invitees_flist_id,
+            id: applyId
+          } = apply;
+          let notify = this.$notify({
+            title: "好友申请",
+            message: "验证消息: " + apply.verify_message,
+            duration: 0,
+            onClick: () => {
+              allowJoinFriendApi({
+                uremark,
+                apply_uid,
+                apply_flist_id,
+                invitees_uid,
+                invitees_flist_id,
+                applyId
+              }).then(code => {
+                if (code === 0) {
+                  notify.close();
+                }
+              });
+            }
+          });
+        }
+      });
     }
   }
 };

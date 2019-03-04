@@ -12,13 +12,7 @@ const user = {
         CLEAR_USER_INFO(state) {
             state.userInfo = {};
             state.hasInfo = false;
-        },
-        SET_CHAT_USER(state, chatUser) {
-            state.chatUser = chatUser;
-        },
-        CLEAR_CHAT_USER(state) {
-            state.chatUser = {};
-        },
+        }
     },
     actions: {}
 }
