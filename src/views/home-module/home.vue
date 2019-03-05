@@ -21,9 +21,9 @@
         </div>
       </div>
       <div class="right-main-con">
-        <div class="content-bg" v-if="curData.imgUrl" :style="{'background-image':'url('+ curData.imgUrl +')'}"></div>
         <div class="main-title">{{curData.title}}</div>
         <div class="main-subtitle">{{curData.author}}</div>
+        <div class="content-bg" v-if="curData.imgUrl" :style="{'background-image':'url('+ curData.imgUrl +')'}"></div>
         <div class="main-content">
           <p class="content-article">{{curData.article}}</p>
         </div>
@@ -116,6 +116,7 @@ $images: "../../assets/images/";
   display: flex;
   .left-nav-con {
     margin-top: 30px;
+    width: 30%;
     .nav-con-title {
       font-size: 20px;
       font-weight: bold;
@@ -123,7 +124,7 @@ $images: "../../assets/images/";
       margin-bottom: 20px;
     }
     .nav-item {
-      width: 300px;
+      // width: 300px;
       max-height: 400px;
       overflow: hidden;
       .nav-title {
@@ -133,15 +134,17 @@ $images: "../../assets/images/";
   }
   .right-main-con {
     position: relative;
-    flex: auto;
-    margin-left: 120px;
+    // flex: auto;
+    width: 65%;
+    margin-left: 5%;
     .content-bg {
       float: right;
-      width: 400px;
-      height: 400px;
+      width: 40%;
+      height: 300px;
       border-radius: 200px;
-      shape-outside: circle();
+      // shape-outside: circle();
       filter: grayscale(80%);
+      shape-outside: content-box;
       background-position: center; 
       background-repeat: no-repeat;
     }
@@ -157,7 +160,7 @@ $images: "../../assets/images/";
     }
     .main-content {
       position: relative;
-      padding: 32px 40% 0px 32px;
+      // padding: 32px 40% 0px 32px;
       // background-image: url($images+"home_map.jpeg");
     }
   }
