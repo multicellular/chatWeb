@@ -76,7 +76,7 @@ export default {
             setItem("my_token", res.token, true);
             this.$store.commit("SET_USER_INFO", res.user); // store 存储userinfo
             this.$router.push(this.$route.query.redirect || "home");
-            this.getNotifys(res.id);
+            this.getNotifys(res.user.id);
           } else {
             this.$message(res.msg);
           }
