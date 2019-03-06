@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { getItem } from "@/utils/storage";
+import { Message } from "element-ui"
 
 const config = {
     timeout: 5000,
@@ -16,6 +17,18 @@ instance.interceptors.request.use(req => {
 }, error => {
     Promise.reject(error);
 });
-instance.interceptors.response.use(res => res.data, err => Promise.reject(err));
+instance.interceptors.response.use(({ data }) => {
+    console.log(data);
+    if (data.code === 0) {
+        return data;
+    } else {
+        Message({
+            type: 'error',
+            message: data.msg,
+            showClose: true
+        });
+        return Promise.reject(data);
+    }
+}, err => Promise.reject(err));
 
 export default instance;

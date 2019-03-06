@@ -28,8 +28,10 @@ const navMixin = {
     },
     signOut(path) {
       this.$store.commit('CLEAR_USER_INFO');
-      removeItem("userAccount", true);
+      removeItem("my_token", true);
+      removeItem("userInfo", true);
       this.$router.push(path);
+      GLOBAL.vbus.$emit("user_offline");
     }
   }
 }

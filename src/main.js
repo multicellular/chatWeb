@@ -26,6 +26,7 @@ Vue.use(VueI18n);
 Vue.use(Router);
 Vue.use(Element, { size: 'medium', i18n: (key, value) => { i18n.t(key, value) } });
 
+GLOBAL.vbus = new Vue();
 
 const messages = {
   en: {

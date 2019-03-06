@@ -103,6 +103,14 @@ export function findApplyApi({ invitees_uid }) {
     });
 }
 
+export function ignoreApplyApi(applyid) {
+    return http({
+        url: '/api/room/ignoreApply',
+        method: 'post',
+        data: { applyid }
+    });
+}
+
 export function allowJoinFriendApi({ uremark, apply_uid, apply_flist_id, invitees_uid, invitees_flist_id, applyId }) {
     return http({
         url: '/api/room/allowJoinFriend',

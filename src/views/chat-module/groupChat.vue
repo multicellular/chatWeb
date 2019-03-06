@@ -150,9 +150,7 @@ export default {
             uids: this.joinIds
           })
           .then(res => {
-            if (res.code === 0) {
-              this.chatUsers = res.users;
-            }
+            this.chatUsers = res.users;
           });
       } else {
         roomApi
@@ -162,21 +160,17 @@ export default {
             ownerid: this.userInfo.id
           })
           .then(res => {
-            if (res.code === 0) {
-              const room = res.room;
-              this.isRoom = true;
-              this.chatObj = room;
-              roomApi
-                .inviteRoomUsersApi({
-                  roomid: room.id,
-                  uids: this.joinIds
-                })
-                .then(res => {
-                  if (res.code === 0) {
-                    this.chatUsers = res.users;
-                  }
-                });
-            }
+            const room = res.room;
+            this.isRoom = true;
+            this.chatObj = room;
+            roomApi
+              .inviteRoomUsersApi({
+                roomid: room.id,
+                uids: this.joinIds
+              })
+              .then(res => {
+                this.chatUsers = res.users;
+              });
           });
       }
     },

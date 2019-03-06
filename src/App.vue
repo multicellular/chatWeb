@@ -2,23 +2,48 @@
   <div id="app">
     <!-- <toolbar /> -->
     <router-view v-loading="isAutoLogin"/>
+    <div class="app-dialog" v-if="isShowDialog">
+      <div class="dialog-header">
+        <span>好友申请消息</span>
+        <icon-svg iconClass="close" @click.native="isShowDialog=false"></icon-svg>
+      </div>
+      <ul class="dialog-bodyer">
+        <li v-for="apply in applys" :key="apply.id">
+          <span>{{apply.verify_message}}</span>
+          <span>
+            备注：
+            <input v-model="apply.remark">
+          </span>
+          <button @click="allowApply(apply)">同意</button>
+          <button @click="ignoreApply(apply.id)">忽略</button>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
 <script>
 import { getItem, setItem } from "@/utils/storage";
 import { infoApi } from "@/api/login";
-import { findApplyApi, allowJoinFriendApi } from "@/api/chat";
-import io from "socket.io-client";
+import { findApplyApi, allowJoinFriendApi, ignoreApplyApi } from "@/api/chat";
+// import io from "socket.io-client";
 export default {
   name: "app",
   data() {
     return {
-      isAutoLogin: false
+      isAutoLogin: false,
+      isShowDialog: false,
+      applys: []
     };
   },
   created() {
     this.autoLogin();
+    GLOBAL.vbus.$on("user_online", user => {
+      this.getNotifys(user.id);
+    });
+    GLOBAL.vbus.$on("user_offline", () => {
+      this.isShowDialog = false;
+    });
   },
   methods: {
     autoLogin() {
@@ -27,68 +52,50 @@ export default {
         this.isAutoLogin = true;
         return infoApi()
           .then(res => {
-            if (res.code === 0) {
-              setItem("userInfo", res.user, true); // 无token时，本地头像展示
-              this.$store.commit("SET_USER_INFO", res.user); // store 存储userinfo
-              if (this.$route.path === "/login") {
-                this.$router.push("/home");
-              }
-              const socket = io("localhost:3000");
-              socket.emit("user", res.user);
-              socket.on("hello", data => {
-                console.log(data);
-              });
-              this.isAutoLogin = false;
-              this.getNotifys(res.user.id);
-              return res;
-            } else {
-              this.isAutoLogin = false;
-              return Promise.reject("未登陆");
+            setItem("userInfo", res.user, true); // 无token时，本地头像展示
+            this.$store.commit("SET_USER_INFO", res.user); // store 存储userinfo
+            if (this.$route.path === "/login") {
+              this.$router.push("/home");
             }
-          })
-          .catch(err => {
+            GLOBAL.vbus.$emit("user_online", res.user);
+            // const socket = io("localhost:3000");
+            // socket.emit("user", res.user);
+            // socket.on("hello", data => {
+            //   console.log(data);
+            // });
             this.isAutoLogin = false;
-            return Promise.reject(err);
+          })
+          .catch(() => {
+            this.isAutoLogin = false;
           });
-      } else {
-        this.isAutoLogin = false;
-        return Promise.reject("未登陆");
       }
     },
     getNotifys(invitees_uid) {
       findApplyApi({ invitees_uid }).then(({ applys }) => {
-        const len = applys && applys.length;
-        for (let i = 0; i < len; i++) {
-          const apply = applys[i];
-          const {
-            verify_message: uremark,
-            apply_uid,
-            apply_flist_id,
-            invitees_uid,
-            invitees_flist_id,
-            id: applyId
-          } = apply;
-          let notify = this.$notify({
-            title: "好友申请",
-            message: "验证消息: " + apply.verify_message,
-            duration: 0,
-            onClick: () => {
-              allowJoinFriendApi({
-                uremark,
-                apply_uid,
-                apply_flist_id,
-                invitees_uid,
-                invitees_flist_id,
-                applyId
-              }).then(code => {
-                if (code === 0) {
-                  notify.close();
-                }
-              });
-            }
-          });
-        }
+        this.applys = applys || {};
+        this.isShowDialog = this.applys.length > 0;
       });
+    },
+    allowApply(apply) {
+      const {
+        remark: uremark,
+        apply_uid,
+        apply_flist_id,
+        invitees_uid,
+        invitees_flist_id,
+        id: applyId
+      } = apply;
+      allowJoinFriendApi({
+        uremark,
+        apply_uid,
+        apply_flist_id,
+        invitees_uid,
+        invitees_flist_id,
+        applyId
+      }).then(() => {});
+    },
+    ignoreApply(applyid) {
+      ignoreApplyApi(applyid).then(() => {});
     }
   }
 };
@@ -108,5 +115,19 @@ export default {
   // height: 100%;
   background-color: #f6f7f9;
   // overflow: hidden;
+}
+.app-dialog {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  background-color: #fff;
+  padding: 20px;
+  .dialog-header {
+    display: flex;
+    justify-content: space-between;
+  }
+  .dialog-bodyer {
+    margin-top: 16px;
+  }
 }
 </style>

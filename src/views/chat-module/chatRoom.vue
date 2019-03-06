@@ -51,7 +51,9 @@
     </el-dialog>
     <el-dialog :visible.sync="isShowApply" :title="'apply message'">
       <div>
-        <input v-model="verify_message">
+        <span>验证消息：
+          <input v-model="verify_message">
+        </span>
         <button @click="apply">申请</button>
       </div>
     </el-dialog>
@@ -141,14 +143,12 @@ export default {
           uname: this.joinUserName
         })
         .then(res => {
-          if (res.code === 0) {
-            this.joinUsers = res.users;
-          }
+          this.joinUsers = res.users;
         });
     },
     clickApply(user) {
       this.applyUser = user;
-      this.verify_message = this.user.userInfo.name;
+      this.verify_message = "我是" + this.user.userInfo.name;
       this.isShowApply = true;
     },
     apply() {
@@ -161,10 +161,8 @@ export default {
           invitees_uid: this.applyUser.uid,
           invitees_flist_id: this.applyUser.flist_id
         })
-        .then(({ code }) => {
-          if (code === 0) {
-            this.$message("申请已发送！");
-          }
+        .then(() => {
+          this.$message("申请已发送！");
         });
     }
   }
