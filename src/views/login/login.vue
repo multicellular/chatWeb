@@ -74,6 +74,7 @@ export default {
           setItem("my_token", res.token, true);
           this.$store.commit("SET_USER_INFO", res.user); // store 存储userinfo
           this.$router.push(this.$route.query.redirect || "home");
+          /* global GLOBAL */
           GLOBAL.vbus.$emit("user_online", res.user);
           this.isLoading = false;
         })

@@ -31,6 +31,7 @@ const navMixin = {
       removeItem("my_token", true);
       removeItem("userInfo", true);
       this.$router.push(path);
+      /* global GLOBAL */
       GLOBAL.vbus.$emit("user_offline");
     }
   }

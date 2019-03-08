@@ -7,9 +7,17 @@
           <li @click="goRoute(navs['blog'].path)">{{navs['blog'].name}}</li>
         </ul>
         <div class="nav-other">
-          <span class="other-item" v-if="user.hasInfo">{{user.userInfo && user.userInfo.name}}</span>
-          <span class="other-item" v-else @click="goRoute('/login')">登陆</span>
-          <span class="other-item" v-if="user.hasInfo" @click="signOut('/home')">退出</span>
+          <el-dropdown v-if="user.hasInfo" @command="handleCommand">
+            <span class="el-dropdown-link">
+              {{user.userInfo && user.userInfo.name}}
+              <i class="el-icon-arrow-down el-icon--right"></i>
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item command="setting">设置</el-dropdown-item>
+              <el-dropdown-item command="sign out">退出</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+          <span class="other-item" v-else @click="goRoute('/login')">登陆/注册</span>
         </div>
       </nav>
       <router-view/>
@@ -34,7 +42,20 @@ export default {
   computed: {
     ...mapGetters(["user"])
   },
-  methods: {}
+  methods: {
+    handleCommand(command) {
+      switch (command) {
+        case "setting":
+          this.goRoute("/setting");
+          break;
+        case "sign out":
+          this.signOut("/home");
+          break;
+        default:
+          console.log("no command");
+      }
+    }
+  }
 };
 </script>
 

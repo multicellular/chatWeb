@@ -14,7 +14,7 @@
         <el-row class="blog-row" v-for="blog in blogs" :key="blog.id">
           <el-card>
             <div class="card-content">
-              <div class="blog-header">
+              <!-- <div class="blog-header">
                 <div class="avatar-con">
                   <img class="card-avatar" :src="blog.uavator">
                 </div>
@@ -22,7 +22,8 @@
                   <div class="card-title">{{blog.uname}}</div>
                   <div class="card-subtitle">{{blog.moment}}</div>
                 </div>
-              </div>
+              </div> -->
+              <user-icon :uavator="blog.uavator" :uname="blog.uname" :ubio="blog.moment"></user-icon>
               <div class="forward-comment" v-if="blog.forwardObj && blog.forwardObj.source_id">
                 <p class="card-title">{{blog.forwardObj.forward_comment}}</p>
               </div>
@@ -77,7 +78,7 @@
               </div>
               <div class="blog-comments">
                 <div class="comment" v-for="comment in blog.blogComments" :key="comment.id">
-                  <div class="comment-header">
+                  <!-- <div class="comment-header">
                     <div class="avatar-con">
                       <img class="comment-avatar" :src="comment.uavator">
                     </div>
@@ -85,7 +86,8 @@
                       <div class="comment-uname">{{comment.uname}}</div>
                       <div class="comment-moment">{{comment.moment}}</div>
                     </div>
-                  </div>
+                  </div> -->
+                  <user-icon :uavator="comment.uavator" :uname="comment.uname" :ubio="comment.moment"></user-icon>
                   <div class="comment-content">{{comment.content}}</div>
                 </div>
               </div>
@@ -139,8 +141,9 @@
     <el-dialog :visible.sync="isShowComments">
       <div class="blog-comments">
         <div class="comment" v-for="comment in comments" :key="comment.id">
-          <span>{{comment.uname}}</span>
-          <img :src="comment.uavator">
+          <!-- <span>{{comment.uname}}</span>
+          <img :src="comment.uavator"> -->
+          <user-icon :uavator="comment.uavator" :uname="comment.uname" :ubio="blog.moment"></user-icon>
           <p>{{comment.content}}</p>
         </div>
       </div>
@@ -226,13 +229,11 @@ export default {
     },
     postBlog() {
       const { title, content } = this.blogFromData;
-      const { avator: uavator, name: uname, id: uid } = this.user.userInfo;
+      const { id: uid } = this.user.userInfo;
       postBlogApi({
         title,
         content,
         images: this.uploadImages,
-        uavator,
-        uname,
         uid
       }).then(({ blog }) => {
         blog.moment = blog.moment ? blog.moment : Date.now();
@@ -246,31 +247,16 @@ export default {
       this.selectBlog = blog;
     },
     forwardBlog() {
-      // forwardObj={ source_uname, source_uid, source_uavator, forward_comment, source_id }
+      // { title, content, images, uid, forward_comment, source_id }
       const {
-        title,
-        content,
-        images,
-        id: source_id,
-        uname: source_uname,
-        uavator: source_uavator,
-        uid: source_uid
+        id,
+        forwardObj: { source_id }
       } = this.selectBlog;
-      const { avator: uavator, name: uname, id: uid } = this.user.userInfo;
+      const { id: uid } = this.user.userInfo;
       postBlogApi({
-        title,
-        content,
-        images: images ? images.join(",") : "", // iamges数据库存储为string，本地展示为array
-        uavator,
-        uname,
         uid,
-        forwardObj: {
-          source_id,
-          source_uname,
-          source_uavator,
-          source_uid,
-          forward_comment: this.forwardBlogComment
-        }
+        forward_comment: this.forwardBlogComment,
+        source_id: source_id || id
       }).then(({ blog }) => {
         blog.moment = blog.moment ? blog.moment : Date.now();
         blog.images = blog.images ? blog.images.split(",") : "";
@@ -291,13 +277,11 @@ export default {
     },
     postComment() {
       const blogid = this.selectBlog.id;
-      const { avator: uavator, name: uname, id: uid } = this.user.userInfo;
+      const { id: uid } = this.user.userInfo;
       postCommentApi({
         blogid,
         content: this.commentContent,
-        uname,
-        uid,
-        uavator
+        uid
       }).then(({ comment }) => {
         comment.moment = Date.now();
         this.comments.push(comment);
@@ -504,6 +488,7 @@ $images: "../../assets/images/";
         .card-avatar {
           max-width: 100%;
           max-height: 100%;
+          border-radius: 50%;
         }
       }
       .card-title {
@@ -585,6 +570,7 @@ $images: "../../assets/images/";
         .comment-avatar {
           max-width: 100%;
           max-height: 100%;
+          border-radius: 50%;
         }
       }
       .comment-uname {

@@ -5,7 +5,8 @@ $rem : 0.0625rem;
 }
 
 .nav-container {
-    height: 120*$rem;
+    // height: 120*$rem;
+    height: 10vh;
     max-width: 1200*$rem;
     margin: auto;
     display: flex;
@@ -51,4 +52,20 @@ $rem : 0.0625rem;
     .el-dialog {
         width: 90% !important;
     }
+    .el-dialog.is-fullscreen{
+        width: 100% !important;
+    }
 }
+.mobile-fullscreen {
+    .is-fullscreen {
+        .el-dialog__header{
+            display: none;
+        }
+        .el-dialog__body {
+            height: 100%;
+            padding: 0px;
+        }
+    }
+
+}
+

@@ -1,25 +1,20 @@
 <template>
   <div class="page-container">
     <div class="main-container">
-      <div class="my-rooms-con">
-        <div class="con-title">我的群聊:</div>
-        <ul class="rooms">
-          <li v-for="room in rooms" :key="room.id" @click="goRoomChat(room)">
-            <span class="room-name">{{room.name}}</span>
-          </li>
-        </ul>
-      </div>
       <div class="my-friends-con">
         <div class="con-title">好友列表:</div>
         <ul class="friends">
-          <li class="friend" v-for="user in friends" :key="user.id" @click="goUserChat(user)">
-            <div class="avatar-con">
-              <img class="user-avatar" :src="user.uavator">
-            </div>
-            <div>
-              <span class="user-name">{{user.uremark || user.uname}}</span>
-              <span class="user-bio">{{user.ubio}}</span>
-            </div>
+          <li
+            class="friend"
+            v-for="friend in friends"
+            :key="friend.uid"
+            @click="joinGroupChat(friend)"
+          >
+            <user-icon
+              :uavator="friend.uavator"
+              :uname="friend.uremark || friend.uname"
+              :ubio="friend.ubio"
+            ></user-icon>
           </li>
         </ul>
         <div class="create-btn-con">
@@ -44,14 +39,15 @@
       <div>
         <ul>
           <li v-for="user in joinUsers" :key="user.id" @click="clickApply(user)">
-            <span>{{user.uname}}</span>
+            <user-icon :uavator="user.uavator" :uname="user.uname" :ubio="user.ubio"></user-icon>
           </li>
         </ul>
       </div>
     </el-dialog>
     <el-dialog :visible.sync="isShowApply" :title="'apply message'">
       <div>
-        <span>验证消息：
+        <span>
+          验证消息：
           <input v-model="verify_message">
         </span>
         <button @click="apply">申请</button>
@@ -91,9 +87,6 @@ export default {
   },
   methods: {
     initPage() {
-      roomApi.getUserRoomsApi(this.userId).then(({ rooms }) => {
-        this.rooms = rooms;
-      });
       roomApi
         .getUserFriendsApi(this.userId)
         .then(({ friend_room, friends }) => {
@@ -104,26 +97,12 @@ export default {
         this.publicRooms = rooms;
       });
     },
-    createRoom() {},
-    goRoomChat(room) {
+    goGroupChat(room) {
       this.$router.push({
         // path: "chat",
         name: "groupChat",
         params: {
-          room,
-          isRoom: true
-        }
-      });
-    },
-    goUserChat(user) {
-      if (user.id === this.userId) {
-        return;
-      }
-      this.$router.push({
-        // path: "chat",
-        name: "groupChat",
-        params: {
-          user
+          roomId: room.id
         }
       });
     },
@@ -163,6 +142,17 @@ export default {
         })
         .then(() => {
           this.$message("申请已发送！");
+          this.isShowApply = false;
+        });
+    },
+    joinGroupChat(friend) {
+      roomApi
+        .createChatApi({
+          uid: this.userId,
+          fuid: friend.uid
+        })
+        .then(({ chat }) => {
+          this.goGroupChat(chat);
         });
     }
   }
@@ -170,54 +160,20 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.page-container {
+  height: 84vh;
+}
 .main-container {
-  .my-rooms-con {
-    border: 1px solid rgba(0, 0, 0, 0.3);
-    padding: 20px;
-    .create-btn-con {
-      margin-top: 12px;
-    }
-  }
+  height: 100%;
   .public-rooms-con {
-    padding: 20px;
+    // padding: 20px;
     margin-top: 24px;
-    border: 1px solid rgba(0, 0, 0, 0.3);
   }
   .my-friends-con {
     .friend {
       display: flex;
       align-items: center;
-      .avatar-con {
-        margin-right: 12px;
-        width: 40px;
-        height: 40px;
-        border-radius: 20px;
-        .user-avatar {
-          max-width: 100%;
-          max-height: 100%;
-        }
-      }
-      .user-name {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: #2e3135;
-      }
-      .user-bio {
-        font-size: 13px;
-        color: #8a9aa9;
-      }
-    }
-  }
-  .rooms {
-    display: flex;
-    flex-direction: column;
-    li {
-      padding: 2px 0px;
-
-      margin: 2px 0px;
-      .room-name {
-        margin-right: 12px;
-      }
+      margin: 8px 0px;
     }
   }
 }

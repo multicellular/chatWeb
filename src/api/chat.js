@@ -1,10 +1,10 @@
 import http from '@/utils/axiosInstance'
 
-export function createRoomApi({ name, desc, ownerid }) {
+export function createRoomApi({ name, caption, ownerid }) {
     return http({
-        url: '/api/room/createRoom',
+        url: '/api/room/insertRoom',
         method: 'post',
-        data: { name, desc, ownerid }
+        data: { name, caption, ownerid }
     });
 }
 
@@ -23,13 +23,21 @@ export function getUserRoomsApi(uid) {
     });
 }
 
-export function getRoomUsersApi(roomid) {
+export function getUserChatsApi(uid) {
     return http({
-        url: '/api/room/getRoomUsers',
+        url: '/api/room/getUserChats',
         method: 'get',
-        params: { roomid }
+        params: { uid }
     });
 }
+
+// export function getRoomUsersApi(roomid) {
+//     return http({
+//         url: '/api/room/getRoomUsers',
+//         method: 'get',
+//         params: { roomid }
+//     });
+// }
 
 export function getUserFriendsApi(uid) {
     return http({
@@ -39,13 +47,21 @@ export function getUserFriendsApi(uid) {
     });
 }
 
-export function inviteRoomUserApi({ roomid, uid }) {
+export function createChatApi({ uid, fuid }) {
     return http({
-        url: '/api/room/userJoinRoom',
+        url: '/api/room/insertChat',
         method: 'post',
-        data: { roomid, uid }
+        data: { uid, fuid }
     });
 }
+
+// export function inviteRoomUserApi({ roomid, uid }) {
+//     return http({
+//         url: '/api/room/userJoinRoom',
+//         method: 'post',
+//         data: { roomid, uid }
+//     });
+// }
 
 export function inviteRoomUsersApi({ roomid, uids }) {
     return http({

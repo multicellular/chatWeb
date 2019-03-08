@@ -5,17 +5,17 @@
     <div class="app-dialog" v-if="isShowDialog">
       <div class="dialog-header">
         <span>好友申请消息</span>
-        <icon-svg iconClass="close" @click.native="isShowDialog=false"></icon-svg>
+        <i class="el-icon-circle-close-outline" @click="isShowDialog=false"></i>
       </div>
       <ul class="dialog-bodyer">
-        <li v-for="apply in applys" :key="apply.id">
-          <span>{{apply.verify_message}}</span>
-          <span>
+        <li v-for="(apply, idx) in applys" :key="apply.id">
+          <span class="message">{{apply.verify_message}}</span>
+          <!-- <span>
             备注：
             <input v-model="apply.remark">
-          </span>
-          <button @click="allowApply(apply)">同意</button>
-          <button @click="ignoreApply(apply.id)">忽略</button>
+          </span>-->
+          <i class="el-icon-close" @click="ignoreApply(apply,idx)"></i>
+          <i class="el-icon-check" @click="allowApply(apply,idx)"></i>
         </li>
       </ul>
     </div>
@@ -27,6 +27,7 @@ import { getItem, setItem } from "@/utils/storage";
 import { infoApi } from "@/api/login";
 import { findApplyApi, allowJoinFriendApi, ignoreApplyApi } from "@/api/chat";
 // import io from "socket.io-client";
+/* global GLOBAL */
 export default {
   name: "app",
   data() {
@@ -76,7 +77,7 @@ export default {
         this.isShowDialog = this.applys.length > 0;
       });
     },
-    allowApply(apply) {
+    allowApply(apply, idx) {
       const {
         remark: uremark,
         apply_uid,
@@ -92,10 +93,20 @@ export default {
         invitees_uid,
         invitees_flist_id,
         applyId
-      }).then(() => {});
+      }).then(() => {
+        this.applys.splice(idx, 1);
+        if (this.applys.length === 0) {
+          this.isShowDialog = false;
+        }
+      });
     },
-    ignoreApply(applyid) {
-      ignoreApplyApi(applyid).then(() => {});
+    ignoreApply(apply, idx) {
+      ignoreApplyApi(apply.id).then(() => {
+        this.applys.splice(idx, 1);
+        if (this.applys.length === 0) {
+          this.isShowDialog = false;
+        }
+      });
     }
   }
 };
@@ -121,13 +132,32 @@ export default {
   right: 20px;
   bottom: 20px;
   background-color: #fff;
-  padding: 20px;
+  border-radius: 10px;
   .dialog-header {
     display: flex;
     justify-content: space-between;
+    padding-left: 20px;
+    span {
+      margin-top: 12px;
+    }
+    .el-icon-circle-close-outline {
+      transform: scale(1.5);
+      cursor: pointer;
+    }
   }
   .dialog-bodyer {
-    margin-top: 16px;
+    padding: 20px;
+    .message {
+      margin-right: 12px;
+    }
+    .el-icon-close {
+      color: red;
+      cursor: pointer;
+    }
+    .el-icon-check {
+      color: #07cc48;
+      cursor: pointer;
+    }
   }
 }
 </style>

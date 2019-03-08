@@ -8,10 +8,21 @@ export default [
             name: 'home',
             path: 'home',
             component: () => import( /* webpackChunkName: "home" */ '@/views/home-module/home')
-        },{
+        }, {
             name: 'title',
             path: 'title',
             component: () => import( /* webpackChunkName: "title" */ '@/views/home-module/title')
+        }, {
+            name: 'setting',
+            path: 'setting',
+            meta: {
+                requiredAuth: true
+            },
+            component: () => import( /* webpackChunkName: "setting" */ '@/views/home-module/setting')
+        }, {
+            name: '404',
+            path: '404',
+            component: () => import( /* webpackChunkName: "404" */ '@/views/home-module/404')
         }]
     },
     {
@@ -26,10 +37,14 @@ export default [
             name: 'groupChat',
             path: 'groupChat',
             component: () => import( /* webpackChunckName: 'groupChat' */ '@/views/chat-module/groupChat')
-        },{
+        }, {
             name: 'chatRoom',
             path: 'chatRoom',
             component: () => import( /* webpackChunckName: 'chatRoom' */ '@/views/chat-module/chatRoom')
+        }, {
+            name: 'publicChat',
+            path: 'publicChat',
+            component: () => import( /* webpackChunckName: 'publicChat' */ '@/views/chat-module/publicChat')
         }]
     },
     {
@@ -52,11 +67,11 @@ export default [
             name: 'gameCenter',
             path: 'gameCenter',
             component: () => import( /* webpackChunckName: 'gameCenter' */ '@/views/game-module/gameCenter')
-        },{
+        }, {
             name: 'game001',
             path: 'game001',
             component: () => import( /* webpackChunckName: 'game001' */ '@/views/game-module/game001')
-        },{
+        }, {
             name: 'game002',
             path: 'game002',
             component: () => import( /* webpackChunckName: 'game002' */ '@/views/game-module/game002')
@@ -66,5 +81,9 @@ export default [
         name: 'login',
         path: '/login',
         component: () => import( /* webpackChunckName: 'login' */ '@/views/login/login')
+    },
+    {
+        path: '*',
+        redirect: '/404'
     }
 ]

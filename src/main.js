@@ -15,9 +15,12 @@ import 'nprogress/nprogress.css'; // progress bar style
 import App from './App.vue'
 //引入svg组件
 import IconSvg from '@/components/icon-svg'
+import UserIcon from '@/components/user-icon'
 
 //全局注册icon-svg
 Vue.component('icon-svg', IconSvg)
+Vue.component('user-icon', UserIcon)
+
 const requireAll = requireContext => requireContext.keys().map(requireContext)
 const req = require.context('@/assets/icons', true, /\.svg$/)
 requireAll(req)
@@ -25,7 +28,7 @@ requireAll(req)
 Vue.use(VueI18n);
 Vue.use(Router);
 Vue.use(Element, { size: 'medium', i18n: (key, value) => { i18n.t(key, value) } });
-
+/* global GLOBAL */
 GLOBAL.vbus = new Vue();
 
 const messages = {

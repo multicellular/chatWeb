@@ -18,7 +18,6 @@ instance.interceptors.request.use(req => {
     Promise.reject(error);
 });
 instance.interceptors.response.use(({ data }) => {
-    console.log(data);
     if (data.code === 0) {
         return data;
     } else {

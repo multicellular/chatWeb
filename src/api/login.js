@@ -27,7 +27,15 @@ export function infoApi() {
     return http({
         url: '/api/user/info',
         method: 'GET',
-        secret: true
+        secret: true // token
+    });
+}
+
+export function modifyBioApi({ userid, bio }) {
+    return http({
+        url: '/api/user/modifyBio',
+        method: 'POST',
+        data: { userid, bio }
     });
 }
 

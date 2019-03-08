@@ -17,19 +17,19 @@ export function getCommentsApi(blogid) {
     });
 }
 
-export function postBlogApi({ title, content, images, uavator, uname, uid, forwardObj = {} }) {
+export function postBlogApi({ title, content, images, uid, forward_comment, source_id }) {
     // forwardObj={ source_uname, source_uid, source_uavator, forward_comment, source_id }
     return http({
         url: '/api/blog/postblog',
         method: 'post',
-        data: { title, content, images, uavator, uname, uid, forwardObj }
+        data: { title, content, images, uid, forward_comment, source_id }
     });
 }
 
-export function postCommentApi({ blogid, content, uname, uid, uavator }) {
+export function postCommentApi({ blogid, content, uid }) {
     return http({
         url: '/api/blog/postcomment',
         method: 'post',
-        data: { blogid, content, uname, uid, uavator }
+        data: { blogid, content, uid }
     });
 }
