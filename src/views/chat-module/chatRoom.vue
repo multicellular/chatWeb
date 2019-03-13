@@ -28,8 +28,10 @@
         <ul class="rooms">
           <!-- 公共房间人员列表不入库，人员列表友socket.io广播通知 -->
           <li v-for="room in publicRooms" :key="room.id">
-            <span class="room-name">{{room.name}}</span>
-            <span class="room-desc">{{room.desc}}</span>
+            <div>
+              <div class="room-name">{{room.name}}</div>
+              <div class="room-desc">{{room.caption}}</div>
+            </div>
             <button class="join-room-btn" @click="goPublicChat(room)">加入房间</button>
           </li>
         </ul>
@@ -168,6 +170,13 @@ export default {
   .public-rooms-con {
     // padding: 20px;
     margin-top: 24px;
+    li {
+      padding: 6px 0px;
+      padding: 6px 0px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
   }
   .my-friends-con {
     .friend {

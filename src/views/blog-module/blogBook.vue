@@ -236,7 +236,7 @@ export default {
         images: this.uploadImages,
         uid
       }).then(({ blog }) => {
-        blog.moment = blog.moment ? blog.moment : Date.now();
+        // blog.moment = blog.moment ? blog.moment : Date.now();
         blog.images = blog.images ? blog.images.split(",") : "";
         this.blogs.push(blog);
         this.isPostBlog = false;
@@ -258,7 +258,7 @@ export default {
         forward_comment: this.forwardBlogComment,
         source_id: source_id || id
       }).then(({ blog }) => {
-        blog.moment = blog.moment ? blog.moment : Date.now();
+        // blog.moment = blog.moment ? blog.moment : Date.now();
         blog.images = blog.images ? blog.images.split(",") : "";
         this.blogs.push(blog);
         this.isForwardBlog = false;

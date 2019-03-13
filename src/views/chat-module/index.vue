@@ -18,11 +18,11 @@
         @click="goRoute('groupChat')"
         :class="{active: $route.name ==='groupChat'}"
       >聊天信息</div>
-      <div
+      <!-- <div
         class="nav-item"
         @click="goRoute('publicChat')"
         :class="{active: $route.name ==='publicChat'}"
-      >公共主题</div>
+      >公共主题</div> -->
     </nav>
     <router-view v-if="!isLoading"/>
     <div v-loading="isLoading"></div>

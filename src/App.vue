@@ -26,7 +26,7 @@
 import { getItem, setItem } from "@/utils/storage";
 import { infoApi } from "@/api/login";
 import { findApplyApi, allowJoinFriendApi, ignoreApplyApi } from "@/api/chat";
-// import io from "socket.io-client";
+import socket from "@/utils/socket";
 /* global GLOBAL */
 export default {
   name: "app",
@@ -59,11 +59,7 @@ export default {
               this.$router.push("/home");
             }
             GLOBAL.vbus.$emit("user_online", res.user);
-            // const socket = io("localhost:3000");
-            // socket.emit("user", res.user);
-            // socket.on("hello", data => {
-            //   console.log(data);
-            // });
+            socket.emit("login", res.user);
             this.isAutoLogin = false;
           })
           .catch(() => {
