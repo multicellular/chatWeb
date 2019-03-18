@@ -4,7 +4,7 @@ import { Message } from "element-ui"
 
 const config = {
     timeout: 5000,
-    // baseURL: 'http://121.196.192.183:3000/'
+    baseURL: '/api'
 };
 const token = getItem("my_token", true);
 const instance = axios.create(config);

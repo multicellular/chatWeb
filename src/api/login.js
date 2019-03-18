@@ -2,7 +2,7 @@ import http from '@/utils/axiosInstance'
 
 export function signUpApi({ name, password, avator }) {
     return http({
-        url: '/api/user/signup',
+        url: '/user/signup',
         method: 'POST',
         data: {
             name,
@@ -14,7 +14,7 @@ export function signUpApi({ name, password, avator }) {
 
 export function signInApi({ name, password }) {
     return http({
-        url: '/api/user/signin',
+        url: '/user/signin',
         method: 'POST',
         data: {
             name,
@@ -25,7 +25,7 @@ export function signInApi({ name, password }) {
 
 export function infoApi() {
     return http({
-        url: '/api/user/info',
+        url: '/user/info',
         method: 'GET',
         secret: true // token
     });
@@ -33,7 +33,7 @@ export function infoApi() {
 
 export function modifyBioApi({ userid, bio }) {
     return http({
-        url: '/api/user/modifyBio',
+        url: '/user/modifyBio',
         method: 'POST',
         data: { userid, bio }
     });
@@ -43,7 +43,7 @@ export function modifyBioApi({ userid, bio }) {
 // chatkit
 export function loginApi(userId) {
     return http({
-        url: '/api/user/login',
+        url: '/user/login',
         method: 'GET',
         params: {
             id: userId
@@ -52,7 +52,7 @@ export function loginApi(userId) {
 }
 export function createApi({ userId, nickName, avatarURL, customData }) {
     return http({
-        url: '/api/user/create',
+        url: '/user/create',
         method: 'POST',
         data: {
             id: userId,
@@ -64,7 +64,7 @@ export function createApi({ userId, nickName, avatarURL, customData }) {
 }
 export function createRoomApi({ userId, roomName, isPrivate, customData, userIds }) {
     return http({
-        url: '/api/user/createRoom',
+        url: '/user/createRoom',
         method: 'POST',
         data: {
             userId,

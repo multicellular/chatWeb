@@ -2,7 +2,7 @@ import http from '@/utils/axiosInstance'
 
 export function createRoomApi({ name, caption, ownerid }) {
     return http({
-        url: '/api/room/insertRoom',
+        url: '/room/insertRoom',
         method: 'post',
         data: { name, caption, ownerid }
     });
@@ -10,14 +10,14 @@ export function createRoomApi({ name, caption, ownerid }) {
 
 export function getPublicRoomsApi() {
     return http({
-        url: '/api/room/getSystemRooms',
+        url: '/room/getSystemRooms',
         method: 'get'
     });
 }
 
 export function getUserRoomsApi(uid) {
     return http({
-        url: '/api/room/getUserRooms',
+        url: '/room/getUserRooms',
         method: 'get',
         params: { uid }
     });
@@ -25,7 +25,7 @@ export function getUserRoomsApi(uid) {
 
 export function getUserChatsApi(uid) {
     return http({
-        url: '/api/room/getUserChats',
+        url: '/room/getUserChats',
         method: 'get',
         params: { uid }
     });
@@ -41,7 +41,7 @@ export function getUserChatsApi(uid) {
 
 export function getUserFriendsApi(uid) {
     return http({
-        url: '/api/room/getUserFriends',
+        url: '/room/getUserFriends',
         method: 'get',
         params: { uid }
     });
@@ -49,7 +49,7 @@ export function getUserFriendsApi(uid) {
 
 export function createChatApi({ uid, fuid }) {
     return http({
-        url: '/api/room/insertChat',
+        url: '/room/insertChat',
         method: 'post',
         data: { uid, fuid }
     });
@@ -65,7 +65,7 @@ export function createChatApi({ uid, fuid }) {
 
 export function inviteRoomUsersApi({ roomid, uids }) {
     return http({
-        url: '/api/room/listJoinRoom',
+        url: '/room/listJoinRoom',
         method: 'post',
         data: { roomid, uids }
     });
@@ -73,7 +73,7 @@ export function inviteRoomUsersApi({ roomid, uids }) {
 
 export function deleteRoomUserApi({ roomid, uid }) {
     return http({
-        url: '/api/room/userLeaveRoom',
+        url: '/room/userLeaveRoom',
         method: 'post',
         data: { roomid, uid }
     });
@@ -97,7 +97,7 @@ export function deleteRoomUserApi({ roomid, uid }) {
 
 export function searchUsersByNameApi({ uname }) {
     return http({
-        url: '/api/room/searchUsersByName',
+        url: '/room/searchUsersByName',
         method: 'get',
         params: { uname }
     });
@@ -105,7 +105,7 @@ export function searchUsersByNameApi({ uname }) {
 
 export function createApplyApi({ verify_message, apply_uid, apply_flist_id, invitees_uid, invitees_flist_id }) {
     return http({
-        url: '/api/room/createApply',
+        url: '/room/createApply',
         method: 'post',
         data: { verify_message, apply_uid, apply_flist_id, invitees_uid, invitees_flist_id }
     });
@@ -113,7 +113,7 @@ export function createApplyApi({ verify_message, apply_uid, apply_flist_id, invi
 
 export function findApplyApi({ invitees_uid }) {
     return http({
-        url: '/api/room/findApply',
+        url: '/room/findApply',
         method: 'get',
         params: { invitees_uid }
     });
@@ -121,7 +121,7 @@ export function findApplyApi({ invitees_uid }) {
 
 export function ignoreApplyApi(applyid) {
     return http({
-        url: '/api/room/ignoreApply',
+        url: '/room/ignoreApply',
         method: 'post',
         data: { applyid }
     });
@@ -129,7 +129,7 @@ export function ignoreApplyApi(applyid) {
 
 export function allowJoinFriendApi({ uremark, apply_uid, apply_flist_id, invitees_uid, invitees_flist_id, applyId }) {
     return http({
-        url: '/api/room/allowJoinFriend',
+        url: '/room/allowJoinFriend',
         method: 'post',
         data: { uremark, apply_uid, apply_flist_id, invitees_uid, invitees_flist_id, applyId }
     });
@@ -137,7 +137,7 @@ export function allowJoinFriendApi({ uremark, apply_uid, apply_flist_id, invitee
 
 export function deleteFriendApi({ flist_id, uid }) {
     return http({
-        url: '/api/room/deleteFriend',
+        url: '/room/deleteFriend',
         method: 'post',
         data: { flist_id, uid }
     });

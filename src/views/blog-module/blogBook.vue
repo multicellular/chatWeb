@@ -10,7 +10,7 @@
           <button @click="clickPostBlog">postBlog</button>
         </div>
       </nav>
-      <div class="blogs-con" id="blogs-con" ref="blogMain" @scroll="bgScroll()">
+      <div class="blogs-con" id="blogs-con" ref="blogMain">
         <el-row class="blog-row" v-for="blog in blogs" :key="blog.id">
           <el-card>
             <div class="card-content">
@@ -22,7 +22,7 @@
                   <div class="card-title">{{blog.uname}}</div>
                   <div class="card-subtitle">{{blog.moment}}</div>
                 </div>
-              </div> -->
+              </div>-->
               <user-icon :uavator="blog.uavator" :uname="blog.uname" :ubio="blog.moment"></user-icon>
               <div class="forward-comment" v-if="blog.forwardObj && blog.forwardObj.source_id">
                 <p class="card-title">{{blog.forwardObj.forward_comment}}</p>
@@ -31,13 +31,13 @@
                 class="blog-content"
                 :class="{'is-forward': blog.forwardObj && blog.forwardObj.source_id}"
               >
-                <div class="card-text">
+                <p class="card-text">
                   <span
                     class="card-text-name"
                     v-if="blog.forwardObj && blog.forwardObj.source_id"
                   >{{'@'+blog.forwardObj.source_uname}}</span>
                   <span>{{blog.content}}</span>
-                </div>
+                </p>
                 <div class="card-image-con" v-if="blog.images">
                   <div class="card-image" v-for="image in blog.images.slice(0,4)" :key="image">
                     <img :src="image">
@@ -78,17 +78,15 @@
               </div>
               <div class="blog-comments">
                 <div class="comment" v-for="comment in blog.blogComments" :key="comment.id">
-                  <!-- <div class="comment-header">
-                    <div class="avatar-con">
-                      <img class="comment-avatar" :src="comment.uavator">
-                    </div>
-                    <div>
-                      <div class="comment-uname">{{comment.uname}}</div>
-                      <div class="comment-moment">{{comment.moment}}</div>
-                    </div>
-                  </div> -->
-                  <user-icon :uavator="comment.uavator" :uname="comment.uname" :ubio="comment.moment"></user-icon>
-                  <div class="comment-content">{{comment.content}}</div>
+                  <div class="avatar-con">
+                    <img class="comment-avatar" :src="comment.uavator">
+                  </div>
+                  <div class="comment-con">
+                    <div class="comment-uname">{{comment.uname}}</div>
+                    <div class="comment-moment">{{comment.moment}}</div>
+                    <div class="comment-content">{{comment.content}}</div>
+                  </div>
+                  <!-- <user-icon :uavator="comment.uavator" :uname="comment.uname" :ubio="comment.moment"></user-icon> -->
                 </div>
               </div>
             </div>
@@ -142,7 +140,7 @@
       <div class="blog-comments">
         <div class="comment" v-for="comment in comments" :key="comment.id">
           <!-- <span>{{comment.uname}}</span>
-          <img :src="comment.uavator"> -->
+          <img :src="comment.uavator">-->
           <user-icon :uavator="comment.uavator" :uname="comment.uname" :ubio="blog.moment"></user-icon>
           <p>{{comment.content}}</p>
         </div>
@@ -162,9 +160,9 @@
             <p class="card-title">{{selectBlog.title}}</p>
           </div>-->
           <div class="blog-content">
-            <div class="card-text">
+            <p class="card-text">
               <span>{{selectBlog.content}}</span>
-            </div>
+            </p>
             <div class="card-image-con" v-if="selectBlog.images">
               <div class="card-image" v-for="image in selectBlog.images.slice(0,4)" :key="image">
                 <img :src="image">
@@ -184,7 +182,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-import html2canvas from "html2canvas";
+// import html2canvas from "html2canvas";
 import {
   getBlogsApi,
   getCommentsApi,
@@ -326,32 +324,32 @@ export default {
     },
     deleteUploadImage(idx) {
       this.uploadImages.splice(idx, 1);
-    },
-    getBgImg() {
-      html2canvas(document.getElementById("blogs-con"), {
-        logging: false
-      }).then(
-        canvas => {
-          const url = canvas.toDataURL("image/png");
-          this.$refs.pageContainer.style.backgroundImage = "url(" + url + ")";
-          // this.bgStyle = {
-          //   "background-image": "url(" + url + ")"
-          // };
-        },
-        err => {
-          console.log(err);
-        }
-      );
-    },
-    bgScroll() {
-      const scrollTop = this.$refs.blogMain.scrollTop;
-      const positionTop = -scrollTop * (100 / (100 - 10 - 8 - 10));
-      // const imageUrl = this.bgStyle["background-image"];
-      this.bgStyle = {
-        // "background-image": imageUrl,
-        "background-position-y": positionTop + "px"
-      };
     }
+    // getBgImg() {
+    //   html2canvas(document.getElementById("blogs-con"), {
+    //     logging: false
+    //   }).then(
+    //     canvas => {
+    //       const url = canvas.toDataURL("image/png");
+    //       this.$refs.pageContainer.style.backgroundImage = "url(" + url + ")";
+    //       // this.bgStyle = {
+    //       //   "background-image": "url(" + url + ")"
+    //       // };
+    //     },
+    //     err => {
+    //       console.log(err);
+    //     }
+    //   );
+    // },
+    // bgScroll() {
+    //   const scrollTop = this.$refs.blogMain.scrollTop;
+    //   const positionTop = -scrollTop * (100 / (100 - 10 - 8 - 10));
+    //   // const imageUrl = this.bgStyle["background-image"];
+    //   this.bgStyle = {
+    //     // "background-image": imageUrl,
+    //     "background-position-y": positionTop + "px"
+    //   };
+    // }
   }
 };
 </script>
@@ -365,13 +363,11 @@ $images: "../../assets/images/";
 }
 .page-container {
   height: 100vh;
-  padding: 10vh 20%;
-  // display: flex;
-  // flex-direction: column;
+  padding: 2vh 20%;
   position: relative;
-  background-repeat: no-repeat;
-  background-size: 1000px;
-  background-position-x: center;
+  // background-repeat: no-repeat;
+  // background-size: 1000px;
+  // background-position-x: center;
   overflow-x: hidden;
   overflow-y: auto;
   .bg-mask {
@@ -502,8 +498,7 @@ $images: "../../assets/images/";
       }
     }
     .blog-content {
-      // padding: 12px 0px;
-      min-height: 100px;
+      min-height: 60px;
       &.is-forward {
         background-color: #f1f4f7;
         padding-left: 12px;
@@ -530,9 +525,6 @@ $images: "../../assets/images/";
           img {
             max-width: 100%;
           }
-          // max-width: 100%;
-          // width: 800px;
-          // height: 100px;
         }
       }
     }
@@ -549,6 +541,7 @@ $images: "../../assets/images/";
   }
   .card-comments {
     padding: 8px 20px;
+    background-color: aliceblue;
     .post-comment {
       display: flex;
       .edit-textarea {
@@ -558,29 +551,29 @@ $images: "../../assets/images/";
     }
     .comment {
       margin: 8px 0px;
-    }
-    .comment-header {
       display: flex;
-      align-items: center;
       .avatar-con {
+        margin-top: 16px;
         margin-right: 12px;
         width: 40px;
         height: 40px;
         border-radius: 20px;
+        overflow: hidden;
         .comment-avatar {
           max-width: 100%;
           max-height: 100%;
-          border-radius: 50%;
         }
       }
-      .comment-uname {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: #2e3135;
-      }
-      .comment-moment {
-        font-size: 13px;
-        color: #8a9aa9;
+      .comment-con {
+        .comment-uname {
+          font-size: 1.25rem;
+          font-weight: 600;
+          color: #2e3135;
+        }
+        .comment-moment {
+          font-size: 13px;
+          color: #8a9aa9;
+        }
       }
     }
   }

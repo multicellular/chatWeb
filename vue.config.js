@@ -3,6 +3,8 @@ const path = require('path');
 function resolve(dir) {
     return path.join(__dirname, dir)
 }
+// const serveUrl = 'http://www.lovepean.xyz:3000';
+const serveUrl = 'http://localhost:3000';
 
 module.exports = {
     outputDir: 'web',
@@ -29,18 +31,18 @@ module.exports = {
     devServer: {
         proxy: {
             '/api': {
-                target: 'http://localhost:3000',
+                target: serveUrl,
                 changeOrigin: true,
                 // pathRewrite:{
                 //     '^/api': '/api'
                 // }
             },
             '/images': {
-                target: 'http://localhost:3000',
+                target: serveUrl,
                 changeOrigin: true,
             },
             '/avators': {
-                target: 'http://localhost:3000',
+                target: serveUrl,
                 changeOrigin: true
             }
         }
