@@ -7,6 +7,14 @@ export function getBlogsApi() {
     });
 }
 
+export function deleteBlogApi(blogid) {
+    return http({
+        url: '/blog/deleteBlog',
+        method: 'get',
+        params: { blogid }
+    });
+}
+
 export function getBlogsByUserApi(uid) {
     return http({
         url: '/blog/getBlogsByUser',

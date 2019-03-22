@@ -56,6 +56,13 @@ export default [
             name: 'blogBook',
             path: 'blogBook',
             component: () => import( /* webpackChunckName: 'blog' */ '@/views/blog-module/blogBook')
+        },{
+            name: 'myBlogBook',
+            path: 'myBlogBook',
+            meta: {
+                requiredAuth: true
+            },
+            component: () => import( /* webpackChunkName: "myBlogBook" */ '@/views/blog-module/myBlogBook')
         }]
     },
     {

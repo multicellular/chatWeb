@@ -1,12 +1,15 @@
 <template>
   <div class="user-icon">
-    <div class="avatar-con">
-      <img class="uavatar" :src="uavator">
+    <div class="user-con">
+      <div class="avatar-con">
+        <img class="uavatar" :src="uavator">
+      </div>
+      <div>
+        <div class="uname">{{uname}}</div>
+        <div class="ubio">{{ubio}}</div>
+      </div>
     </div>
-    <div>
-      <div class="uname">{{uname}}</div>
-      <div class="ubio">{{ubio}}</div>
-    </div>
+    <slot></slot>
   </div>
 </template>
 
@@ -19,6 +22,10 @@ export default {
 
 <style lang="scss" scoped>
 .user-icon {
+  display: flex;
+  justify-content: space-between;
+}
+.user-con {
   display: flex;
   align-items: center;
   .avatar-con {

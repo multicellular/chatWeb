@@ -49,6 +49,9 @@ $rem : 0.0625rem;
     
 }
 @media only screen and (max-width: 1000px) {
+    .page-container {
+        padding: 0;
+    }
     .el-dialog {
         width: 90% !important;
     }

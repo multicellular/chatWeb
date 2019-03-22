@@ -2,19 +2,18 @@
   <div class="page-container" :style="bgStyle" ref="pageContainer">
     <div class="bg-mask"></div>
     <div class="main-container">
-      <nav class="page-nav">
-        <i class="el-icon-menu"></i>
-        <span class="nav-menu" @click="$router.push('/chat')">chat</span>
-        <span class="nav-menu" @click="$router.push('/home')">home</span>
-        <div>
-          <button @click="clickPostBlog">postBlog</button>
-        </div>
-      </nav>
       <div class="blogs-con" id="blogs-con" ref="blogMain" @scroll="handleScroll()">
-        <el-row class="blog-row" v-for="blog in blogs" :key="blog.id">
+        <el-row class="blog-row" v-for="(blog,index) in blogs" :key="blog.id">
           <el-card>
             <div class="card-content">
-              <user-icon :uavator="blog.uavator" :uname="blog.uname" :ubio="blog.moment"></user-icon>
+              <user-icon :uavator="blog.uavator" :uname="blog.uname" :ubio="blog.moment">
+                <div class="operation-con">
+                  <button
+                    v-if="blog.uid==user.userInfo.id"
+                    @click="deleteBlog(blog.id,index)"
+                  >delete blog</button>
+                </div>
+              </user-icon>
               <div class="forward-comment" v-if="blog.forwardObj && blog.forwardObj.source_id">
                 <p class="card-title">{{blog.forwardObj.forward_comment}}</p>
               </div>
@@ -225,11 +224,13 @@
 import { mapGetters } from "vuex";
 import { uploadFile } from "@/api/public";
 // import html2canvas from "html2canvas";
+/* global GLOBAL */
 import {
   getBlogsApi,
   getCommentsApi,
   postBlogApi,
-  postCommentApi
+  postCommentApi,
+  deleteBlogApi
 } from "@/api/blog";
 
 export default {
@@ -262,6 +263,9 @@ export default {
   mounted() {
     // this.getBgImg();
     this.initPage();
+    GLOBAL.vbus.$on("clickPostBlog", () => {
+      this.clickPostBlog();
+    });
   },
   methods: {
     initPage() {
@@ -361,6 +365,15 @@ export default {
         this.blogs.push(blog);
         this.isForwardBlog = false;
         this.selectBlog.forwards = parseInt(this.selectBlog.forwards) + 1;
+      });
+    },
+    deleteBlog(blogid, index) {
+      deleteBlogApi(blogid).then(() => {
+        this.blogs.splice(index, 1);
+        this.$message({
+          message: "操作成功",
+          type: "success"
+        });
       });
     },
     // clickGetComments(blog) {
@@ -490,14 +503,9 @@ export default {
 
 <style lang="scss" scoped>
 $images: "../../assets/images/";
-@media only screen and (max-width: 1000px) {
-  .page-container {
-    padding: 0 !important;
-  }
-}
 .page-container {
-  height: 100vh;
-  padding: 2vh 20%;
+  height: 90%;
+  // padding: 2vh 20%;
   position: relative;
   // background-repeat: no-repeat;
   // background-size: 1000px;
@@ -524,23 +532,7 @@ $images: "../../assets/images/";
     background-color: #fff;
     display: flex;
     flex-direction: column;
-    .page-nav {
-      // width: 100%;
-      // margin: auto;
-      min-height: 60px;
-      display: flex;
-      align-items: center;
-      background-color: #fafbfcf2;
-      .el-icon-menu {
-        font-size: 20px;
-        margin-left: 16px;
-      }
-      .nav-menu {
-        margin: 16px;
-        font-size: 20px;
-        font-weight: 500;
-      }
-    }
+
     .blogs-con {
       flex: auto;
       overflow-x: hidden;
@@ -607,30 +599,6 @@ $images: "../../assets/images/";
     margin-bottom: 20px;
   }
   .card-content {
-    // .blog-header {
-    //   display: flex;
-    //   align-items: center;
-    //   .avatar-con {
-    //     margin-right: 12px;
-    //     width: 40px;
-    //     height: 40px;
-    //     border-radius: 20px;
-    //     .card-avatar {
-    //       max-width: 100%;
-    //       max-height: 100%;
-    //       border-radius: 50%;
-    //     }
-    //   }
-    //   .card-title {
-    //     font-size: 1.25rem;
-    //     font-weight: 600;
-    //     color: #2e3135;
-    //   }
-    //   .card-subtitle {
-    //     font-size: 13px;
-    //     color: #8a9aa9;
-    //   }
-    // }
     .blog-content {
       min-height: 60px;
       &.is-forward {
@@ -659,6 +627,11 @@ $images: "../../assets/images/";
           img {
             max-width: 100%;
           }
+        }
+      }
+      .card-video-con {
+        video {
+          max-width: 100%;
         }
       }
     }
