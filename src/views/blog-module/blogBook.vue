@@ -10,19 +10,10 @@
           <button @click="clickPostBlog">postBlog</button>
         </div>
       </nav>
-      <div class="blogs-con" id="blogs-con" ref="blogMain">
+      <div class="blogs-con" id="blogs-con" ref="blogMain" @scroll="handleScroll()">
         <el-row class="blog-row" v-for="blog in blogs" :key="blog.id">
           <el-card>
             <div class="card-content">
-              <!-- <div class="blog-header">
-                <div class="avatar-con">
-                  <img class="card-avatar" :src="blog.uavator">
-                </div>
-                <div class="card-title-con">
-                  <div class="card-title">{{blog.uname}}</div>
-                  <div class="card-subtitle">{{blog.moment}}</div>
-                </div>
-              </div>-->
               <user-icon :uavator="blog.uavator" :uname="blog.uname" :ubio="blog.moment"></user-icon>
               <div class="forward-comment" v-if="blog.forwardObj && blog.forwardObj.source_id">
                 <p class="card-title">{{blog.forwardObj.forward_comment}}</p>
@@ -38,15 +29,32 @@
                   >{{'@'+blog.forwardObj.source_uname}}</span>
                   <span>{{blog.content}}</span>
                 </p>
-                <div class="card-image-con" v-if="blog.images">
-                  <div class="card-image" v-for="image in blog.images.slice(0,4)" :key="image">
-                    <img :src="image">
+                <div v-if="blog.media_type==='image'">
+                  <div class="card-image-con" v-if="blog.images">
+                    <div class="card-image" v-for="image in blog.images.slice(0,4)" :key="image">
+                      <img :src="image">
+                    </div>
+                  </div>
+                  <div class="card-image-con" v-if="blog.images && blog.images.length > 4">
+                    <div class="card-image" v-for="image in blog.images.slice(4,8)" :key="image">
+                      <img :src="image">
+                    </div>
                   </div>
                 </div>
-                <div class="card-image-con" v-if="blog.images && blog.images.length > 4">
-                  <div class="card-image" v-for="image in blog.images.slice(4,8)" :key="image">
-                    <img :src="image">
+                <div v-else-if="blog.media_type==='video'">
+                  <div class="card-video-con">
+                    <video
+                      :src="blog.video"
+                      controls="controls"
+                      :id="'main'+blog.id"
+                      width="320"
+                      height="240"
+                      @play="videoPlay('main'+blog.id)"
+                    ></video>
                   </div>
+                </div>
+                <div v-else>
+                  <a :href="blog.media_urls" download="下载文件"></a>
                 </div>
               </div>
             </div>
@@ -105,7 +113,7 @@
           <textarea class="edit-textarea" v-model="blogFromData.content"></textarea>
         </div>
         <div class="images-con">
-          <div class="image-con" v-for="(image, idx) in uploadImages" :key="image">
+          <div class="image-con" v-for="(image, idx) in blogFromData.uploadImages" :key="idx">
             <img class="upload-image" :src="image">
             <img
               class="delete-image"
@@ -113,19 +121,40 @@
               src="@/assets/images/delete.png"
             >
           </div>
+          <div class="image-con" v-if="blogFromData.uploadVideo">
+            <video
+              class="upload-image"
+              :src="blogFromData.uploadVideo"
+              controls="controls"
+              id="uploadVideo"
+              @play="videoPlay('uploadVideo')"
+            ></video>
+            <img class="delete-image" @click="deleteUploadVideo" src="@/assets/images/delete.png">
+          </div>
         </div>
         <div class="btns-con">
-          <input
-            class="upload-input"
-            type="file"
-            @change="uploadImage"
-            v-show="uploadImages.length < 8"
+          <label
+            for="uploadImage"
+            @click.stop
+            v-show="!(blogFromData.uploadImages.length > 8 || blogFromData.uploadVideo)"
           >
+            <input class="upload-input" type="file" @change="uploadImage">上传图片
+          </label>
+          <label
+            for="uploadVideo"
+            @click.stop
+            v-show="!(blogFromData.uploadImages.length > 0 || blogFromData.uploadVideo)"
+          >
+            <input class="upload-input" type="file" @change="uploadVideo">上传视频
+          </label>
+          <label for="isPrivate" @click.stop>
+            <input type="checkbox" id="isPrivate" v-model="blogFromData.is_private">不公开发布
+          </label>
           <div class="emoji-con"></div>
         </div>
       </div>
     </el-dialog>
-    <el-dialog :visible.sync="isPostComment">
+    <!-- <el-dialog :visible.sync="isPostComment">
       <div class="postCommentDialog">
         <div>
           content
@@ -139,8 +168,6 @@
     <el-dialog :visible.sync="isShowComments">
       <div class="blog-comments">
         <div class="comment" v-for="comment in comments" :key="comment.id">
-          <!-- <span>{{comment.uname}}</span>
-          <img :src="comment.uavator">-->
           <user-icon :uavator="comment.uavator" :uname="comment.uname" :ubio="blog.moment"></user-icon>
           <p>{{comment.content}}</p>
         </div>
@@ -148,7 +175,7 @@
       <div>
         <button @click="clickPostComment()">postComment</button>
       </div>
-    </el-dialog>
+    </el-dialog>-->
     <el-dialog :visible.sync="isForwardBlog" :title="'Forward Blog'">
       <div class="forwardBlogDialog blogs-con">
         <button class="forward-btn" @click="forwardBlog()">forward</button>
@@ -163,14 +190,28 @@
             <p class="card-text">
               <span>{{selectBlog.content}}</span>
             </p>
-            <div class="card-image-con" v-if="selectBlog.images">
-              <div class="card-image" v-for="image in selectBlog.images.slice(0,4)" :key="image">
-                <img :src="image">
+            <div v-if="selectBlog.media_type==='image'">
+              <div class="card-image-con" v-if="selectBlog.images">
+                <div class="card-image" v-for="image in selectBlog.images.slice(0,4)" :key="image">
+                  <img :src="image">
+                </div>
+              </div>
+              <div class="card-image-con" v-if="selectBlog.images && selectBlog.images.length > 4">
+                <div class="card-image" v-for="image in selectBlog.images.slice(4,8)" :key="image">
+                  <img :src="image">
+                </div>
               </div>
             </div>
-            <div class="card-image-con" v-if="selectBlog.images && selectBlog.images.length > 4">
-              <div class="card-image" v-for="image in selectBlog.images.slice(4,8)" :key="image">
-                <img :src="image">
+            <div v-else-if="selectBlog.media_type==='video'">
+              <div class="card-video-con">
+                <video
+                  :src="selectBlog.video"
+                  width="320"
+                  height="240"
+                  controls="controls"
+                  id="forwardVideo"
+                  @play="videoPlay('forwardVideo')"
+                ></video>
               </div>
             </div>
           </div>
@@ -182,6 +223,7 @@
 
 <script>
 import { mapGetters } from "vuex";
+import { uploadFile } from "@/api/public";
 // import html2canvas from "html2canvas";
 import {
   getBlogsApi,
@@ -189,21 +231,29 @@ import {
   postBlogApi,
   postCommentApi
 } from "@/api/blog";
+
 export default {
   data() {
     return {
       bgStyle: {},
       blogs: [],
       comments: [],
-      blogFromData: {},
-      uploadImages: [],
+      blogFromData: {
+        title: "",
+        content: "",
+        is_private: false,
+        uploadImages: [],
+        uploadVideo: "",
+        files: []
+      },
       commentContent: [],
       selectBlog: {},
-      isPostComment: false,
+      // isPostComment: false,
       isPostBlog: false,
       isForwardBlog: false,
-      isShowComments: false,
-      forwardBlogComment: ""
+      // isShowComments: false,
+      forwardBlogComment: "",
+      curPlayVideoId: ""
     };
   },
   computed: {
@@ -217,7 +267,11 @@ export default {
     initPage() {
       getBlogsApi().then(({ blogs }) => {
         blogs.forEach(blog => {
-          blog.images = blog.images ? blog.images.split(",") : "";
+          if (blog.media_type === "image") {
+            blog.images = blog.media_urls ? blog.media_urls.split(",") : "";
+          } else if (blog.media_type === "video") {
+            blog.video = blog.media_urls;
+          }
         });
         this.blogs = blogs;
       });
@@ -225,19 +279,62 @@ export default {
     clickPostBlog() {
       this.isPostBlog = true;
     },
-    postBlog() {
-      const { title, content } = this.blogFromData;
+    hidePostBlog() {
+      this.isPostBlog = false;
+      this.blogFromData = {
+        title: "",
+        content: "",
+        is_private: false,
+        uploadImages: [],
+        uploadVideo: "",
+        files: []
+      };
+    },
+    async postBlog() {
+      const {
+        title,
+        content,
+        files,
+        is_private,
+        uploadVideo
+      } = this.blogFromData;
       const { id: uid } = this.user.userInfo;
+      let media_type = "image";
+      let media_urls = "";
+      let responseObj;
+      let formData = new FormData();
+      const fileLen = files ? files.length : 0;
+      if (fileLen > 0) {
+        if (uploadVideo) {
+          media_type = "video";
+        }
+        for (let i = 0; i < files.length; i++) {
+          formData.append("file", files[i]);
+        }
+        try {
+          responseObj = await uploadFile(formData);
+          media_urls = responseObj.urls;
+        } catch (err) {
+          // eslint-disable-next-line
+          console.log("uploadErr:", err);
+        }
+      }
+
       postBlogApi({
         title,
         content,
-        images: this.uploadImages,
-        uid
+        media_type,
+        media_urls,
+        uid,
+        is_private
       }).then(({ blog }) => {
-        // blog.moment = blog.moment ? blog.moment : Date.now();
-        blog.images = blog.images ? blog.images.split(",") : "";
+        if (blog.media_type === "image") {
+          blog.images = blog.media_urls ? blog.media_urls.split(",") : "";
+        } else if (blog.media_type === "video") {
+          blog.video = blog.media_urls;
+        }
         this.blogs.push(blog);
-        this.isPostBlog = false;
+        this.hidePostBlog();
       });
     },
     clickForwardBlog(blog) {
@@ -256,37 +353,40 @@ export default {
         forward_comment: this.forwardBlogComment,
         source_id: source_id || id
       }).then(({ blog }) => {
-        // blog.moment = blog.moment ? blog.moment : Date.now();
-        blog.images = blog.images ? blog.images.split(",") : "";
+        if (blog.media_type === "image") {
+          blog.images = blog.media_urls ? blog.media_urls.split(",") : "";
+        } else if (blog.media_type === "video") {
+          blog.video = blog.media_urls;
+        }
         this.blogs.push(blog);
         this.isForwardBlog = false;
         this.selectBlog.forwards = parseInt(this.selectBlog.forwards) + 1;
       });
     },
-    clickGetComments(blog) {
-      this.isShowComments = true;
-      this.selectBlog = blog;
-      getCommentsApi(blog.id).then(({ comments }) => {
-        this.comments = comments;
-      });
-    },
-    clickPostComment() {
-      this.isPostComment = true;
-    },
-    postComment() {
-      const blogid = this.selectBlog.id;
-      const { id: uid } = this.user.userInfo;
-      postCommentApi({
-        blogid,
-        content: this.commentContent,
-        uid
-      }).then(({ comment }) => {
-        comment.moment = Date.now();
-        this.comments.push(comment);
-        this.selectBlog.comments = parseInt(this.selectBlog.comments) + 1;
-        this.isPostComment = false;
-      });
-    },
+    // clickGetComments(blog) {
+    //   this.isShowComments = true;
+    //   this.selectBlog = blog;
+    //   getCommentsApi(blog.id).then(({ comments }) => {
+    //     this.comments = comments;
+    //   });
+    // },
+    // clickPostComment() {
+    //   this.isPostComment = true;
+    // },
+    // postComment() {
+    //   const blogid = this.selectBlog.id;
+    //   const { id: uid } = this.user.userInfo;
+    //   postCommentApi({
+    //     blogid,
+    //     content: this.commentContent,
+    //     uid
+    //   }).then(({ comment }) => {
+    //     comment.moment = Date.now();
+    //     this.comments.push(comment);
+    //     this.selectBlog.comments = parseInt(this.selectBlog.comments) + 1;
+    //     this.isPostComment = false;
+    //   });
+    // },
     showBlogComments(blog) {
       this.$set(blog, "isShowBlogComments", !blog.isShowBlogComments);
       if (blog.isShowBlogComments) {
@@ -298,15 +398,13 @@ export default {
       }
     },
     postBlogComment(blog) {
-      const { avator: uavator, name: uname, id: uid } = this.user.userInfo;
+      const { id: uid } = this.user.userInfo;
       postCommentApi({
         blogid: blog.id,
         content: blog.blogCommentContent,
-        uname,
-        uid,
-        uavator
+        uid
       }).then(({ comment }) => {
-        comment.moment = Date.now();
+        // comment.moment = Date.now();
         blog.blogComments.push(comment);
         blog.comments = parseInt(blog.comments) + 1;
         blog.blogCommentContent = "";
@@ -318,12 +416,48 @@ export default {
       reader.readAsDataURL(file);
       const _this = this;
       reader.onload = function() {
-        _this.uploadImages.push(reader.result);
+        _this.blogFromData.uploadImages.push(reader.result);
+        if (!_this.blogFromData.files) {
+          _this.blogFromData.files = [];
+        }
+        _this.blogFromData.files.push(file);
       };
       e.target.value = "";
     },
     deleteUploadImage(idx) {
-      this.uploadImages.splice(idx, 1);
+      this.blogFromData.uploadImages.splice(idx, 1);
+      this.blogFromData.files.splice(idx, 1);
+    },
+    uploadVideo(e) {
+      const file = e.target.files[0];
+      this.blogFromData.uploadVideo = URL.createObjectURL(file);
+      this.blogFromData.files = [file];
+      // const reader = new FileReader();
+      // reader.readAsDataURL(file);
+      // const _this = this;
+      // reader.onload = function() {
+      //   _this.blogFromData.uploadVideo = reader.result;
+      //   _this.blogFromData.files = [file];
+      // };
+      e.target.value = "";
+    },
+    deleteUploadVideo() {
+      this.blogFromData.uploadVideo = "";
+      this.blogFromData.files = [];
+    },
+    videoPlay(id) {
+      if (this.curPlayVideoId && this.curPlayVideoId !== id) {
+        const curPlayVideo = document.getElementById(this.curPlayVideoId);
+        curPlayVideo.pause();
+      }
+      this.curPlayVideoId = id;
+    },
+    handleScroll() {
+      if (this.curPlayVideoId) {
+        const curPlayVideo = document.getElementById(this.curPlayVideoId);
+        curPlayVideo.pause();
+        this.curPlayVideoId = "";
+      }
     }
     // getBgImg() {
     //   html2canvas(document.getElementById("blogs-con"), {
@@ -473,30 +607,30 @@ $images: "../../assets/images/";
     margin-bottom: 20px;
   }
   .card-content {
-    .blog-header {
-      display: flex;
-      align-items: center;
-      .avatar-con {
-        margin-right: 12px;
-        width: 40px;
-        height: 40px;
-        border-radius: 20px;
-        .card-avatar {
-          max-width: 100%;
-          max-height: 100%;
-          border-radius: 50%;
-        }
-      }
-      .card-title {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: #2e3135;
-      }
-      .card-subtitle {
-        font-size: 13px;
-        color: #8a9aa9;
-      }
-    }
+    // .blog-header {
+    //   display: flex;
+    //   align-items: center;
+    //   .avatar-con {
+    //     margin-right: 12px;
+    //     width: 40px;
+    //     height: 40px;
+    //     border-radius: 20px;
+    //     .card-avatar {
+    //       max-width: 100%;
+    //       max-height: 100%;
+    //       border-radius: 50%;
+    //     }
+    //   }
+    //   .card-title {
+    //     font-size: 1.25rem;
+    //     font-weight: 600;
+    //     color: #2e3135;
+    //   }
+    //   .card-subtitle {
+    //     font-size: 13px;
+    //     color: #8a9aa9;
+    //   }
+    // }
     .blog-content {
       min-height: 60px;
       &.is-forward {

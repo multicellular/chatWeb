@@ -44,6 +44,10 @@ module.exports = {
             '/avators': {
                 target: serveUrl,
                 changeOrigin: true
+            },
+            '/files': {
+                target: serveUrl,
+                changeOrigin: true
             }
         }
     }

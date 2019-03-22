@@ -7,6 +7,14 @@ export function getBlogsApi() {
     });
 }
 
+export function getBlogsByUserApi(uid) {
+    return http({
+        url: '/blog/getBlogsByUser',
+        method: 'get',
+        params: { uid }
+    });
+}
+
 export function getCommentsApi(blogid) {
     return http({
         url: '/blog/getcomments',
@@ -17,12 +25,12 @@ export function getCommentsApi(blogid) {
     });
 }
 
-export function postBlogApi({ title, content, images, uid, forward_comment, source_id }) {
+export function postBlogApi({ title, content, media_urls, media_type, uid, forward_comment, source_id, is_private }) {
     // forwardObj={ source_uname, source_uid, source_uavator, forward_comment, source_id }
     return http({
         url: '/blog/postblog',
         method: 'post',
-        data: { title, content, images, uid, forward_comment, source_id }
+        data: { title, content, media_urls, media_type, uid, forward_comment, source_id, is_private }
     });
 }
 
@@ -31,15 +39,5 @@ export function postCommentApi({ blogid, content, uid }) {
         url: '/blog/postcomment',
         method: 'post',
         data: { blogid, content, uid }
-    });
-}
-
-export function uploadFile(file){
-    return http({
-        url: '/uploadFile',
-        method: 'post',
-        data: 
-            file
-        
     });
 }

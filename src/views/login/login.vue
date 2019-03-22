@@ -42,6 +42,7 @@
 <script>
 import { getItem, setItem } from "@/utils/storage";
 import { signInApi, signUpApi } from "@/api/login";
+import { uploadFile } from "@/api/public";
 export default {
   data() {
     return {
@@ -52,7 +53,8 @@ export default {
       userSignUpPassword: "",
       userAvatorUrl: "",
       isLoading: false,
-      localUser: {}
+      localUser: {},
+      avatorFile: {}
     };
   },
   mounted() {
@@ -116,7 +118,7 @@ export default {
           this.$refs.fileInput.value = "";
           return;
         }
-
+        this.avatorFile = file;
         // this.file = file;
         const reader = new FileReader();
         const that = this;
@@ -128,15 +130,17 @@ export default {
       }
       this.$refs.fileInput.value = "";
     },
-    signUp() {
+    async signUp() {
       if (!this.userSignUpName || !this.userSignUpPassword) {
         return;
       }
-      this.isLoading = true;
+      const formData = new FormData();
+      formData.append("file", this.avatorFile);
+      const avatorObj = await uploadFile(formData);
       signUpApi({
         name: this.userSignUpName,
         password: this.userSignUpPassword,
-        avator: this.userAvatorUrl
+        avator: avatorObj.file.path
       })
         .then(() => {
           this.userSignInName = this.userSignUpName;
