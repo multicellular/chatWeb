@@ -140,7 +140,7 @@ export default {
       signUpApi({
         name: this.userSignUpName,
         password: this.userSignUpPassword,
-        avator: avatorObj.file.path
+        avator: avatorObj.urls
       })
         .then(() => {
           this.userSignInName = this.userSignUpName;
