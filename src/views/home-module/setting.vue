@@ -24,7 +24,6 @@
 <script>
 import { mapGetters } from "vuex";
 import { modifyBioApi } from "@/api/login";
-import { getBlogsByUserApi } from "@/api/blog";
 export default {
   data() {
     return {

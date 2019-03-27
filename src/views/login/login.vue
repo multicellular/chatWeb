@@ -43,6 +43,7 @@
 import { getItem, setItem } from "@/utils/storage";
 import { signInApi, signUpApi } from "@/api/login";
 import { uploadFile } from "@/api/public";
+import lrz from "lrz";
 export default {
   data() {
     return {
@@ -108,25 +109,34 @@ export default {
           this.$refs.fileInput.value = "";
           return;
         }
-        // 限制上传图片大小
-        const fileSize = file.size / 1024;
-        if (fileSize > 1024) {
-          this.$message({
-            message: "图片大小不能超过1MB！",
-            type: "error"
+        lrz(file, { width: 40 })
+          .then(result => {
+            // this.avatorFile = result.formData;
+            this.avatorFile = result.file; //压缩后的file对象
+            this.userAvatorUrl = result.base64;
+          })
+          .always(() => {
+            this.$refs.fileInput.value = "";
           });
-          this.$refs.fileInput.value = "";
-          return;
-        }
-        this.avatorFile = file;
-        // this.file = file;
-        const reader = new FileReader();
-        const that = this;
-        reader.readAsDataURL(file);
-        reader.onload = function() {
-          that.$refs.fileInput.value = "";
-          that.userAvatorUrl = reader.result;
-        };
+        // // 限制上传图片大小
+        // const fileSize = file.size / 1024;
+        // if (fileSize > 1024) {
+        //   this.$message({
+        //     message: "图片大小不能超过1MB！",
+        //     type: "error"
+        //   });
+        //   this.$refs.fileInput.value = "";
+        //   return;
+        // }
+        // this.avatorFile = file;
+        // // this.file = file;
+        // const reader = new FileReader();
+        // const that = this;
+        // reader.readAsDataURL(file);
+        // reader.onload = function() {
+        //   that.$refs.fileInput.value = "";
+        //   that.userAvatorUrl = reader.result;
+        // };
       }
       this.$refs.fileInput.value = "";
     },

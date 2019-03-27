@@ -225,6 +225,7 @@ import { mapGetters } from "vuex";
 import { uploadFile } from "@/api/public";
 // import html2canvas from "html2canvas";
 /* global GLOBAL */
+import lrz from "lrz";
 import {
   getBlogsApi,
   getCommentsApi,
@@ -425,17 +426,29 @@ export default {
     },
     uploadImage(e) {
       const file = e.target.files[0];
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      const _this = this;
-      reader.onload = function() {
-        _this.blogFromData.uploadImages.push(reader.result);
-        if (!_this.blogFromData.files) {
-          _this.blogFromData.files = [];
-        }
-        _this.blogFromData.files.push(file);
-      };
-      e.target.value = "";
+      lrz(file, { width: 270 })
+        .then(result => {
+          // result.formData;
+          if (!this.blogFromData.files) {
+            this.blogFromData.files = [];
+          }
+          this.blogFromData.files.push(result.file); //压缩后的file对象
+          this.blogFromData.uploadImages.push(result.base64);
+        })
+        .always(() => {
+          e.target.value = "";
+        });
+      // const reader = new FileReader();
+      // reader.readAsDataURL(file);
+      // const _this = this;
+      // reader.onload = function() {
+      //   _this.blogFromData.uploadImages.push(reader.result);
+      //   if (!_this.blogFromData.files) {
+      //     _this.blogFromData.files = [];
+      //   }
+      //   _this.blogFromData.files.push(file);
+      // };
+      // e.target.value = "";
     },
     deleteUploadImage(idx) {
       this.blogFromData.uploadImages.splice(idx, 1);
