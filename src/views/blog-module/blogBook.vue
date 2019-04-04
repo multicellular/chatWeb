@@ -314,7 +314,7 @@ export default {
           media_type = "video";
         }
         for (let i = 0; i < files.length; i++) {
-          formData.append("file", files[i]);
+          formData.append("file", files[i],'blog.jpeg');
         }
         try {
           responseObj = await uploadFile(formData);

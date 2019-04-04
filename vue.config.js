@@ -8,6 +8,7 @@ const serveUrl = 'http://localhost:3000';
 
 module.exports = {
     outputDir: 'web',
+    // publicPath: '/web/', // 部署应用包时的基本 URL。
     chainWebpack: config => {
         // 修改svg loader
         config.module

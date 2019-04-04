@@ -145,7 +145,7 @@ export default {
         return;
       }
       const formData = new FormData();
-      formData.append("file", this.avatorFile);
+      formData.append("file", this.avatorFile,'avator.jpeg');
       const avatorObj = await uploadFile(formData);
       signUpApi({
         name: this.userSignUpName,
