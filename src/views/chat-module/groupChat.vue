@@ -47,19 +47,19 @@
         <div class="chat-content-bd" ref="scrollView">
           <ul>
             <li
-              v-for="(message, index) in messages"
+              v-for="(message, index) in curRoomMessages"
               :key="index"
-              :class="message.senderId===userId ? 'chat-message-right':'chat-message-left'"
+              :class="message.sendid===userId ? 'chat-message-right':'chat-message-left'"
             >
               <!-- 用户头像 -->
-              <img class="chat-avatar" :src="userAvatars[message.senderId]">
+              <img class="chat-avatar" :src="userAvatars[message.sendid]">
               <!-- 用户昵称 -->
               <div class="chat-message">
-                <p class="chat-name">{{userNames[message.senderId]}}</p>
+                <p class="chat-name">{{userNames[message.sendid]}}</p>
                 <!-- 内容 -->
-                <p v-if="message.text" class="chat-text">{{message.text}}</p>
+                <p v-if="message.type==='text'" class="chat-text">{{message.content}}</p>
                 <!-- 图片 -->
-                <img v-else-if="message.attachment" class="chat-image" :src="message.attachment">
+                <img v-else-if="message.type==='image'" class="chat-image" :src="message.content">
                 <!-- 系统消息 -->
                 <!-- <span v-else-if="message.type==='3'" class="chat-system-text">{{message.content}}</span> -->
                 <!-- 未知对象 -->
@@ -104,19 +104,19 @@
         <div class="chat-content-bd" ref="scrollView">
           <ul>
             <li
-              v-for="(message, index) in messages"
+              v-for="(message, index) in curRoomMessages"
               :key="index"
-              :class="message.senderId===userId ? 'chat-message-right':'chat-message-left'"
+              :class="message.sendid===userId ? 'chat-message-right':'chat-message-left'"
             >
               <!-- 用户头像 -->
-              <img class="chat-avatar" :src="userAvatars[message.senderId]">
+              <img class="chat-avatar" :src="userAvatars[message.sendid]">
               <!-- 用户昵称 -->
               <div class="chat-message">
-                <p class="chat-name">{{userNames[message.senderId]}}</p>
+                <p class="chat-name">{{userNames[message.sendid]}}</p>
                 <!-- 内容 -->
-                <p v-if="message.text" class="chat-text">{{message.text}}</p>
+                <p v-if="message.type='text'" class="chat-text">{{message.content}}</p>
                 <!-- 图片 -->
-                <img v-else-if="message.attachment" class="chat-image" :src="message.attachment">
+                <img v-else-if="message.type='image'" class="chat-image" :src="message.content">
                 <!-- 系统消息 -->
                 <!-- <span v-else-if="message.type==='3'" class="chat-system-text">{{message.content}}</span> -->
                 <!-- 未知对象 -->
@@ -156,6 +156,7 @@
 <script>
 import { mapGetters } from "vuex";
 import * as roomApi from "@/api/chat";
+import Web_Socket from "@/utils/webSocket";
 export default {
   data() {
     return {
@@ -168,7 +169,8 @@ export default {
       curIndex: 0,
       isShowChatUsers: false,
       joinLoading: false,
-      isShowMobileChat: false
+      isShowMobileChat: false,
+      web_socket: null
     };
   },
   computed: {
@@ -194,6 +196,31 @@ export default {
     },
     isMobile() {
       return /Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent);
+    },
+    userAvatars() {
+      const avators = {};
+      let user = {};
+      const len = this.chatUsers.length;
+      for (let i = 0; i < len; i++) {
+        user = this.chatUsers[i];
+        avators[user.uid] = user.uavator;
+      }
+      return avators;
+    },
+    userNames() {
+      const names = {};
+      let user = {};
+      const len = this.chatUsers.length;
+      for (let i = 0; i < len; i++) {
+        user = this.chatUsers[i];
+        names[user.uid] = user.uname;
+      }
+      return names;
+    },
+    curRoomMessages() {
+      return this.messages.filter(message => {
+        return message.roomid == this.curRoom.id;
+      });
     }
   },
   created() {
@@ -208,6 +235,7 @@ export default {
       ]).then(([{ rooms }, { chats }]) => {
         this.chatRooms = chats.concat(rooms);
         const index = this.chatRooms.findIndex(room => {
+          // return room.id === curRoomId && room.isChat===curRoomIsChat;
           return room.id === curRoomId && room.isChat;
         });
         if (index > -1) {
@@ -221,6 +249,20 @@ export default {
         this.isShowMobileChat = true;
         this.isShowChatUsers = false;
       }
+      if (this.web_socket) {
+        this.web_socket.close();
+      }
+      this.web_socket = new Web_Socket(
+        `/chat/${this.curRoom.id}/${this.userId}`
+      ).getWebSocket();
+      setTimeout(() => {
+        this.web_socket.send("join");
+        this.web_socket.onmessage = message => {
+          console.log(message);
+          var msg = JSON.parse(message.data);
+          this.messages.push(msg);
+        };
+      }, 1000);
     },
     getUserFriends() {
       if (this.userFriends && this.userFriends.length > 0) {

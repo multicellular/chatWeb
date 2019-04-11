@@ -26,7 +26,9 @@
 import { getItem, setItem } from "@/utils/storage";
 import { infoApi } from "@/api/login";
 import { findApplyApi, allowJoinFriendApi, ignoreApplyApi } from "@/api/chat";
-import socket from "@/utils/socket";
+// import socket from "@/utils/socket";
+import Web_Socket from "@/utils/webSocket";
+
 /* global GLOBAL */
 export default {
   name: "app",
@@ -59,7 +61,18 @@ export default {
               this.$router.push("/home");
             }
             GLOBAL.vbus.$emit("user_online", res.user);
-            socket.emit("login", res.user);
+            // socket.emit("login", res.user);
+            var web_socket = new Web_Socket(
+              "/connect/" + res.user.id
+            ).getWebSocket();
+            web_socket.send("connect");
+            web_socket.onmessage = message => {
+              var msg = JSON.parse(message);
+              this.$message({
+                message: msg.content,
+                type: "success"
+              });
+            };
             this.isAutoLogin = false;
           })
           .catch(() => {
