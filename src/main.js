@@ -17,6 +17,11 @@ import App from './App.vue'
 import IconSvg from '@/components/icon-svg'
 import UserIcon from '@/components/user-icon'
 
+import { setItem } from "@/utils/storage";
+
+// 获取服务器设置的cookie
+import * as cookies from "browser-cookies";
+
 //全局注册icon-svg
 Vue.component('icon-svg', IconSvg)
 Vue.component('user-icon', UserIcon)
@@ -28,6 +33,11 @@ requireAll(req)
 Vue.use(VueI18n);
 Vue.use(Router);
 Vue.use(Element, { size: 'medium', i18n: (key, value) => { i18n.t(key, value) } });
+
+//本地存储token
+if (cookies.get('oauth_token')) {
+  setItem('my_token', cookies.get('oauth_token'), true)
+}
 /* global GLOBAL */
 GLOBAL.vbus = new Vue();
 

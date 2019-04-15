@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "browser-cookies": "^1.2.0",
     "element-ui": "^2.5.4",
     "html2canvas": "^1.0.0-alpha.12",
     "lrz": "^4.9.40",

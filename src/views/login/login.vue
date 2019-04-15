@@ -15,6 +15,12 @@
         <div class="from-item from-btn">
           <button @click="signIn" class="from-btn">Sign in</button>
         </div>
+        <div class="oauth-con">
+          <a href="http://localhost:3000/api/github_oauth">
+            <i>github image</i>
+            <span>github</span>
+          </a>
+        </div>
       </div>
       <div v-else class="sign-up-container">
         <button class="from-btn" @click="goSignIn">Go Sign in</button>
@@ -118,25 +124,6 @@ export default {
           .always(() => {
             this.$refs.fileInput.value = "";
           });
-        // // 限制上传图片大小
-        // const fileSize = file.size / 1024;
-        // if (fileSize > 1024) {
-        //   this.$message({
-        //     message: "图片大小不能超过1MB！",
-        //     type: "error"
-        //   });
-        //   this.$refs.fileInput.value = "";
-        //   return;
-        // }
-        // this.avatorFile = file;
-        // // this.file = file;
-        // const reader = new FileReader();
-        // const that = this;
-        // reader.readAsDataURL(file);
-        // reader.onload = function() {
-        //   that.$refs.fileInput.value = "";
-        //   that.userAvatorUrl = reader.result;
-        // };
       }
       this.$refs.fileInput.value = "";
     },

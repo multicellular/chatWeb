@@ -7,6 +7,7 @@
           <li @click="goRoute(navs['blog'].path)">{{navs['blog'].name}}</li>
         </ul>
         <div class="nav-other">
+          <img class="avator-image" :src="user.userInfo.avator">
           <el-dropdown v-if="user.hasInfo" @command="handleCommand">
             <span class="el-dropdown-link">
               {{user.userInfo && user.userInfo.name}}

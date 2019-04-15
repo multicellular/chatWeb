@@ -3,8 +3,8 @@ const path = require('path');
 function resolve(dir) {
     return path.join(__dirname, dir)
 }
-const serveUrl = 'http://www.lovepean.xyz:3000';
-// const serveUrl = 'http://localhost:3000';
+// const serveUrl = 'http://www.lovepean.xyz:3000';
+const serveUrl = 'http://localhost:3000';
 
 module.exports = {
     outputDir: 'web',

@@ -27,6 +27,13 @@ $rem : 0.0625rem;
     .nav-other {
         display: flex;
         align-items: center;
+        .avator-image {
+            width: 30px;
+            height: 30px;
+            border-radius: 15px;
+            vertical-align: middle;
+            margin-right: 4px;
+        }
         .other-item {
             padding:6*$rem 15*$rem;
             font-size: 18*$rem;
