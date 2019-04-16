@@ -1,11 +1,17 @@
 import axios from 'axios'
-import { getItem } from "@/utils/storage";
+import { getItem, setItem } from "@/utils/storage";
 import { Message } from "element-ui"
+// 获取服务器设置的cookie
+import * as cookies from "browser-cookies";
 
 const config = {
     timeout: 5000,
     baseURL: '/api'
 };
+//本地存储token
+if (cookies.get('oauth_token')) {
+    setItem('my_token', cookies.get('oauth_token'), true)
+}
 const token = getItem("my_token", true);
 const instance = axios.create(config);
 instance.interceptors.request.use(req => {

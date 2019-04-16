@@ -16,10 +16,13 @@
           <button @click="signIn" class="from-btn">Sign in</button>
         </div>
         <div class="oauth-con">
-          <a href="http://localhost:3000/api/github_oauth">
-            <i>github image</i>
-            <span>github</span>
-          </a>
+          <div class="oauth-tip">请选择快捷登录方式</div>
+          <div class="oauth-content">
+            <a class="r-oauth" href="http://www.lovepean.xyz:3000/api/github_oauth">
+              <img src="@/assets/images/github.png" class="oauth-icon">
+              <span class="oauth-label">GitHub</span>
+            </a>
+          </div>
         </div>
       </div>
       <div v-else class="sign-up-container">
@@ -132,7 +135,7 @@ export default {
         return;
       }
       const formData = new FormData();
-      formData.append("file", this.avatorFile,'avator.jpeg');
+      formData.append("file", this.avatorFile, "avator.jpeg");
       const avatorObj = await uploadFile(formData);
       signUpApi({
         name: this.userSignUpName,
@@ -187,6 +190,27 @@ $images: "../../assets/images/";
     align-self: center;
     margin-top: -70px;
     margin-bottom: 20px;
+  }
+
+  .oauth-con {
+    margin-top: 30px;
+    .oauth-tip {
+      font-size: 14px;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    .oauth-content {
+      display: flex;
+      .oauth-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 30px;
+        display: block;
+      }
+      .oauth-label {
+        color: #959595;
+      }
+    }
   }
 }
 </style>

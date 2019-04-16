@@ -1,4 +1,7 @@
 import { removeItem } from "@/utils/storage";
+// 获取服务器设置的cookie
+import * as cookies from "browser-cookies";
+
 const navMixin = {
   data() {
     return {
@@ -30,6 +33,7 @@ const navMixin = {
       this.$store.commit('CLEAR_USER_INFO');
       removeItem("my_token", true);
       removeItem("userInfo", true);
+      cookies.erase('oauth_token');
       this.$router.push(path);
       /* global GLOBAL */
       GLOBAL.vbus.$emit("user_offline");
