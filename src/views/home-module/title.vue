@@ -35,7 +35,7 @@
     width: 100%;
     height: 400px;
     overflow: hidden;
-    background-image: url($images+"home_map.jpeg");
+    // background-image: url($images+"home_map.jpeg");
     background-repeat: no-repeat;
     // background-size: cover;
     background-size: auto 100%;

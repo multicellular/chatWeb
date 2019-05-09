@@ -3,6 +3,7 @@
     <div class="module-container">
       <nav class="nav-container">
         <ul class="nav-ul">
+          <li class="logo">Share</li>
           <li @click="goRoute(navs['chat'].path)">{{navs['chat'].name}}</li>
           <li @click="goRoute(navs['blog'].path)">{{navs['blog'].name}}</li>
         </ul>
@@ -64,8 +65,9 @@ export default {
 #home-module {
   padding: 10px;
   background-color: #ffef00;
-  min-height: 100%;
+  // min-height: 100%;
   display: flex;
+  flex: auto;
 }
 .module-container {
   background-color: #f6f7f9;
@@ -82,6 +84,35 @@ export default {
   .el-icon-con i {
     font-size: 24px;
     margin-right: 20px;
+  }
+}
+.logo {
+  background-image: -webkit-linear-gradient(
+    left,
+    blue,
+    #66ffff 10%,
+    #cc00ff 20%,
+    #cc00cc 30%,
+    #ccccff 40%,
+    #00ffff 50%,
+    #ccccff 60%,
+    #cc00cc 70%,
+    #cc00ff 80%,
+    #66ffff 90%,
+    blue 100%
+  );
+  -webkit-text-fill-color: transparent; /* 将字体设置成透明色 */
+  -webkit-background-clip: text; /* 裁剪背景图，使文字作为裁剪区域向外裁剪 */
+  -webkit-background-size: 200% 100%;
+  -webkit-animation: masked-animation 4s linear infinite;
+  font-size: 35px;
+}
+@keyframes masked-animation {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: -100% 0;
   }
 }
 </style>

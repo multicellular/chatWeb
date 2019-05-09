@@ -34,8 +34,8 @@
 
 <script>
 import { mapGetters } from "vuex";
-import image1 from "@/assets/images/home_bg.jpeg";
-import image2 from "@/assets/images/home_map.jpeg";
+// import image1 from "@/assets/images/home_bg.jpeg";
+// import image2 from "@/assets/images/home_map.jpeg";
 export default {
   data() {
     return {
@@ -64,7 +64,7 @@ export default {
         {
           title: "四 季",
           author: "（陈丹燕）",
-          imgUrl: image1,
+          // imgUrl: image1,
           article: `冬天的寒潮到来的时候，南方雾状的天空上变得寒冷而明丽。看上去，蓝得不认识。阳光像锐利的箭一样，冰凉地射过来，在路上走一圈，觉得前额已经被冻得昏起来了。这才是真正的冬天。
             我想，我喜欢四季鲜明，热就是热，冷就是冷。有一年冬天在广州，看着那里的树千辛万苦地支撑着绿，所有的叶子却绿得又旧又累，心里真正是惊异与遗憾，为它们觉得累，四季如春。
             我想，冬天是一定太黑太乏味。所以，天虽然冷下来，大家走在路上虽然缩手缩脚，但还是可以感觉到季节的生动。
@@ -81,7 +81,7 @@ export default {
         {
           title: "永恒的变化",
           author: "[美]曼迪诺",
-          imgUrl: image2,
+          // imgUrl: image2,
           article: `没有什么是一成不变的。生活就像自然，有阳春，也有金秋；有酷夏，也有寒冬。走运和倒霉都不可能持续很久。对于突然情况，如果没有充分的思想准备，
           那么厄运就会像大海的波涛一样，在你生活的海岸上忽起忽落拍打不停。相应的，高潮和低潮，日出和日落，富有和贫穷，快乐和失望，将应运而生。
           做好最坏的准备。别羡慕那些春风得意的骄子。他们往往是脆弱的，一旦面临灾祸，就会束手无策，彻底崩溃。也别学那些倒霉背时的可怜家伙。他们一遇到挫折就不能自拔，常常沉溺于悲哀，

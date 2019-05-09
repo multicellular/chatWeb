@@ -532,7 +532,7 @@ $images: "../../assets/images/";
     top: 0px;
     left: 0px;
     background-color: #eef2f7f5;
-    background-image: url($images+"bg001.jpg");
+    // background-image: url($images+"bg001.jpg");
     opacity: 0.95;
   }
   .main-container {

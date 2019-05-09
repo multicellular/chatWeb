@@ -28,6 +28,13 @@ module.exports = {
                 symbolId: 'icon-[name]'
             })
             .end();
+        
+        // 添加打包分析模式
+        if (process.env.npm_config_report) {
+            config
+                .plugin('webpack-bundle-analyzer')
+                .use(require('webpack-bundle-analyzer').BundleAnalyzerPlugin)
+        }
     },
     devServer: {
         proxy: {
