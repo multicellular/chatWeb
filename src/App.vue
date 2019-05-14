@@ -129,9 +129,11 @@ export default {
   /* text-align: center;
   color: #2c3e50;
   margin-top: 60px; */
-  display: flex;
-  flex-direction: column;
+  // display: flex;
+  // flex-direction: column;
   min-height: 100%;
+  width: 100%;
+  height: 100%;
   // height: 100%;
   background-color: #f6f7f9;
   // overflow: hidden;

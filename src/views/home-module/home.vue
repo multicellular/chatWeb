@@ -1,31 +1,188 @@
 <template>
-  <div class="page-container">
-    <div class="main-container">
-      <div class="left-nav-con">
-        <div class="nav-con-title">LATEST</div>
-        <div class="nav-item" @click="curIdx=0">
-          <div class="nav-title">{{mockData[0].title}}</div>
-          <p class="nav-content">{{mockData[0].article | first}}</p>
+  <div class="homepage-wrap">
+    <!-- 导航页 -->
+    <header class="header-wrapper">
+      <div class="nav-container">
+        <div class="menu-wrap">
+          <svg id="menu-circle">
+            <circle
+              class="circle"
+              cx="50"
+              cy="50"
+              r="40"
+              stroke="#fff"
+              stroke-width="2"
+              fill="none"
+              shape-rendering="geometricPrecision"
+              data-svg-origin="50 50"
+              :style="{'stroke-dashoffset': onPressed ? 1e-05 : 252.327}"
+              style="stroke-dasharray: 252.327, 262.327; transform-origin: 0px 0px 0px; transform: matrix(0, -1, 1, 0, 0, 100); stroke: rgb(255, 255, 255);"
+            ></circle>
+          </svg>
+          <div class="burger-wrap" @click="onPressed=!onPressed">
+            <div class="burger" :class="{'open':onPressed}"></div>
+          </div>
         </div>
-        <div class="nav-item" @click="curIdx=1">
-          <div class="nav-title">{{mockData[1].title}}</div>
-          <p class="nav-content">{{mockData[1].article | first}}</p>
+        <div class="works_order">
+          <div class="order_circle" data-id="1">
+            <span class="circle"></span>
+            <span class="hover-circle">HOME</span>
+          </div>
+          <div class="order_line"></div>
+          <div class="order_circle" data-id="1" data-type="case" data-case="1">
+            <span class="circle"></span>
+            <span class="hover-circle" @click="goRoute(navs['chat'].path)">{{navs['chat'].name}}</span>
+          </div>
+          <div class="order_line"></div>
+          <div class="order_circle" data-id="2" data-type="case" data-case="2">
+            <span class="circle"></span>
+            <span class="hover-circle" @click="goRoute(navs['blog'].path)">{{navs['blog'].name}}</span>
+          </div>
+          <div class="order_line"></div>
+          <div class="order_circle" data-id="3" data-type="case" data-case="3">
+            <span class="circle"></span>
+            <span class="hover-circle">SOCIAL</span>
+          </div>
+          <div class="order_line"></div>
+          <div class="order_circle" data-id="4" data-type="case" data-case="4">
+            <span class="circle"></span>
+            <span class="hover-circle">OUTDOOR</span>
+          </div>
+          <div class="order_line"></div>
+          <div class="order_circle" data-id="3">
+            <span class="circle"></span>
+            <span class="hover-circle">ABOUT</span>
+          </div>
+          <div class="order_line"></div>
+          <div class="order_circle" data-id="4">
+            <span class="circle"></span>
+            <span class="hover-circle">CAREERS</span>
+          </div>
+          <div class="current_works" style="transform: matrix(-1, 0, 0, -1, 0, 0);">
+            <span class="icon-arrow-2"></span>
+          </div>
         </div>
-        <div class="nav-item" @click="curIdx=2">
-          <div class="nav-title">{{mockData[2].title}}</div>
-          <p class="nav-content">{{mockData[2].article | first}}</p>
+        <div class="logo">SHARE</div>
+        <span v-if="user.hasInfo">{{user.userInfo && user.userInfo.name}}</span>
+        <span v-else @click="goRoute('/login')">登陆/注册</span>
+      </div>
+    </header>
+    <!-- 引导页 -->
+    <div class="index_box full_screen v1" :class="{'hide_index':isShowMain}">
+      <div id="index_video"></div>
+      <div class="slash_bg full_screen">
+        <h1 class="line" style="opacity: 1;">
+          <div class="gene-text" style="opacity: 1; display: block;">
+            <span>JUST</span>
+            <span>
+              <span class="adj" style="white-space:pre;">DO</span>
+              <span class="typed-cursor" style="display: none;">_</span>
+            </span>
+            <span class="gene">IT</span>
+          </div>
+          <span class="all" style="opacity: 0; display: none;">TODO</span>
+          <div class="name-title">
+            <span class="title team" style="opacity: 1; margin-top: 0px; display: block;">
+              <span class="name">everyone</span>
+              <span class="divide">/</span>
+              <span class="job_title">todo</span>
+            </span>
+            <span class="title for-all" style="opacity: q; display: none;">
+              the time
+              <span class="break-line">is going</span>
+            </span>
+          </div>
+        </h1>
+        <a class="arrow_box" href="javascript:;" id="scrollBtn">
+          <svg>
+            <circle cx="50" cy="50" r="30" stroke="#fff" stroke-width="2" fill="none"></circle>
+          </svg>
+          <div class="arrow-wrap" @click="scrollToMain">
+            <div class="icon-arrow"></div>
+          </div>
+        </a>
+      </div>
+    </div>
+    <!-- 主页 -->
+    <div class="main_box full_screen v1">
+      <div class="full_screen">
+        <div class="case1">
+          <div id="box_bg "></div>
+          <div id="box_title "></div>
         </div>
-        <div class="nav-item" @click="curIdx=3">
-          <div class="nav-title">{{mockData[3].title}}</div>
-          <p class="nav-content">{{mockData[3].article | first}}</p>
+        <div class="case2">
+          <div id="box_bg "></div>
+          <div id="box_title "></div>
+        </div>
+        <div class="case3">
+          <div id="box_bg "></div>
+          <div id="box_title "></div>
         </div>
       </div>
-      <div class="right-main-con">
-        <div class="main-title">{{curData.title}}</div>
-        <div class="main-subtitle">{{curData.author}}</div>
-        <div class="content-bg" v-if="curData.imgUrl" :style="{'background-image':'url('+ curData.imgUrl +')'}"></div>
-        <div class="main-content">
-          <p class="content-article">{{curData.article}}</p>
+    </div>
+    <!-- 菜单页 -->
+    <div class="main_menu full_screen" :class="onPressed?'menu_show':'not_show'">
+      <div class="main_menu_center">
+        <ul>
+          <li>
+            <a href="#" class="menu-btn" data-cut="1">
+              <span class="left-bar"></span>
+              <span class="menu-title">
+                OUR GENES
+                <span class="icon-arrow-2"></span>
+              </span>
+              <!-- <span class="right-bar"></span> -->
+            </a>
+          </li>
+          <li>
+            <a href="#" class="menu-btn" data-cut="2" data-type="case" data-case="1">
+              <!-- <span class="left-bar"></span> -->
+              <span class="menu-title">
+                WHAT WE DO
+                <span class="icon-arrow-2"></span>
+              </span>
+              <span class="right-bar"></span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="menu-btn" data-cut="3">
+              <span class="left-bar"></span>
+              <span class="menu-title">
+                WHO WE ARE
+                <span class="icon-arrow-2"></span>
+              </span>
+              <!-- <span class="right-bar"></span> -->
+            </a>
+          </li>
+          <li>
+            <a href="#" class="menu-btn" data-cut="4">
+              <!-- <span class="left-bar"></span> -->
+              <span class="menu-title">
+                JOIN US
+                <span class="icon-arrow-2"></span>
+              </span>
+              <span class="right-bar"></span>
+            </a>
+          </li>
+        </ul>
+        <div class="to_socialmedia_box">
+          <div class="f_left">
+            <span class="to_fb ga-out-btn" data-ga="menu_btn_fb" href target="_blank">
+              <svg class="white-stroke">
+                <circle
+                  cx="35"
+                  cy="35"
+                  r="32"
+                  stroke="#8e8e92"
+                  stroke-width="2"
+                  fill="none"
+                  shape-rendering="geometricPrecision"
+                ></circle>
+              </svg>
+              <div class="icon_style icon-fb"></div>
+            </span>
+          </div>
+          <div class="clear_both"></div>
         </div>
       </div>
     </div>
@@ -34,136 +191,644 @@
 
 <script>
 import { mapGetters } from "vuex";
-// import image1 from "@/assets/images/home_bg.jpeg";
-// import image2 from "@/assets/images/home_map.jpeg";
+import { navMixin } from "@/utils/mixins";
 export default {
+  name: "home-module",
   data() {
     return {
-      regexStr: '^[^，,.。"“！! ?？]+',
-      mockData: [
-        {
-          title: "季节之门",
-          author: "（周捷）",
-          imgUrl: '',
-          article: `清晨起来推开窗户，一阵湿润润的气息扑面而来，一种熟悉的温馨告诉我：春天来了。这睡眼惺忪的一推，打开的却是一扇季节之门。
-            匆匆忙忙走在回家的路上，绷着脸，思绪还未从忙碌后的疲惫中解脱出来。忽听一声喊，原来是数月不见的老友。一挥手，几句亲切的笑骂脱口而出，心中顿觉春意暖怀。那一挥手，一莞尔，心扉的季节之门顿时打开。
-            季节之门，原来是这样简简单单。毋须刻意追求，毋需四处寻找，季节之门，就在瞬间转换。推开门是冬；微笑着是春，绷着脸是冬。季节之门，就在我们心与心、心与自然的交流对视之时开启。
-            季节之门，有一把百试不爽的金钥匙，上面刻着：温馨、微笑。`
-        },
-        {
-          title: "这世界真美",
-          author: "（石雪辉）",
-          imgUrl: '',
-          article: `你们走的时候，很想洒脱很想倜傥。你们真正走的时候，却是在夜晚悄悄地走的，还撑了一把漂亮的伞。我想我只有投奔雨了，
-            不料雨停后的草地竟是馨香透亮的，微风亲切地拂面掠耳。在这个时刻，世界真美。
-            绯红花瓣在手指间飘落是美，斑斓汪洋如海的明媚是美，君子好逑的季节是美，在冷清阴湿的路上累累的苦痛也是一种美。
-            当心事浸没五月的堤岸，当记忆焚烧悔恨的灵魂，当暴风雨摧毁了希望之船，五彩缤纷却仍是阳光的歌词，勿忘我花仍旧晶莹剔透，彼岸仍在热切地呼唤。
-            落霞是暮云吗？落霞是燃烧的玫瑰。一如荒原有真实的太阳，秋雨有知己的情人。
-            这世界真美。`
-        },
-        {
-          title: "四 季",
-          author: "（陈丹燕）",
-          // imgUrl: image1,
-          article: `冬天的寒潮到来的时候，南方雾状的天空上变得寒冷而明丽。看上去，蓝得不认识。阳光像锐利的箭一样，冰凉地射过来，在路上走一圈，觉得前额已经被冻得昏起来了。这才是真正的冬天。
-            我想，我喜欢四季鲜明，热就是热，冷就是冷。有一年冬天在广州，看着那里的树千辛万苦地支撑着绿，所有的叶子却绿得又旧又累，心里真正是惊异与遗憾，为它们觉得累，四季如春。
-            我想，冬天是一定太黑太乏味。所以，天虽然冷下来，大家走在路上虽然缩手缩脚，但还是可以感觉到季节的生动。
-            随之而来的春天，才会被人在这寒风中千百次地被人幻想。人生也是这样，有大起大落，才衬托出一种美丽与背景。`
-        },
-        {
-          title: "自由是感觉不到的",
-          author: "（柯云路)",
-          imgUrl: '',
-          article: `自由是感觉不到的。这就是深刻的格言。感觉不到的就是“无”，就是无为。我们能感觉到的是不自由。当我们说自由时，说自在时，是因为我们还感觉到不自由、不自在。
-            或者，起码是我们曾感觉到过不自由、不自在。感觉到自由了，自在了，那是因为还残存着些微的不自由，不自在，至少还有着不自由、不自在的记忆。
-            其实，即使我们只是记着过去曾有的不自由、不自在，那么，它仍然具有一定程度的现时意义。真正的自由，就是彻底的“无”，就是连过去的不自由，也毫无印象。`
-        },
-        {
-          title: "永恒的变化",
-          author: "[美]曼迪诺",
-          // imgUrl: image2,
-          article: `没有什么是一成不变的。生活就像自然，有阳春，也有金秋；有酷夏，也有寒冬。走运和倒霉都不可能持续很久。对于突然情况，如果没有充分的思想准备，
-          那么厄运就会像大海的波涛一样，在你生活的海岸上忽起忽落拍打不停。相应的，高潮和低潮，日出和日落，富有和贫穷，快乐和失望，将应运而生。
-          做好最坏的准备。别羡慕那些春风得意的骄子。他们往往是脆弱的，一旦面临灾祸，就会束手无策，彻底崩溃。也别学那些倒霉背时的可怜家伙。他们一遇到挫折就不能自拔，常常沉溺于悲哀，
-          一错再错，在眼看就要柳暗花明之际，却躺下不再起来。注意坚持不懈，别学他们的样儿。
-          要永远坚信这一点，一切都会变的。无论受多大创伤，心情多么沉重，一贫如洗也好，都要坚持住。太阳落了还会升起，不幸的日子总有尽头，过去是这样，将来也是这样。`
-        }
-      ],
-      curIdx: 4,
+      onPressed: false,
+      isShowMain: false
     };
   },
+  mixins: [navMixin],
   computed: {
-    ...mapGetters(["user"]),
-    curData() {
-      return this.mockData[this.curIdx] || {};
-    }
-  },
-  filters: {
-    first: function(value) {
-      if (!value) return "";
-      return value.match(/^[^.。！! ?？]+/)[0];
-    }
+    ...mapGetters(["user"])
   },
   methods: {
+    handleCommand(command) {
+      switch (command) {
+        case "setting":
+          this.goRoute("/setting");
+          break;
+        case "sign out":
+          this.signOut("/home");
+          break;
+        default:
+          console.log("no command");
+      }
+    },
+    scrollToMain() {
+      this.isShowMain = true;
+    }
   }
 };
 </script>
 
 <style lang="scss" scoped>
-$images: "../../assets/images/";
-.main-container {
-  color: #333;
-  display: flex;
-  .left-nav-con {
-    margin-top: 30px;
-    width: 30%;
-    .nav-con-title {
-      font-size: 20px;
-      font-weight: bold;
-      letter-spacing: 2px;
-      margin-bottom: 20px;
+$assets_path: "../../assets/";
+.homepage-wrap {
+  // display: flex;
+  // flex-direction: column;
+  // flex: auto;
+  height: 100%;
+  overflow: hidden;
+}
+
+.header-wrapper {
+  width: 100%;
+  z-index: 10;
+  position: fixed;
+  .nav-container {
+    display: flex;
+    color: #fff;
+    align-items: center;
+    width: 1200px;
+    margin: auto;
+    position: relative;
+  }
+}
+.logo {
+  background-image: -webkit-linear-gradient(
+    left,
+    blue,
+    #66ffff 10%,
+    #cc00ff 20%,
+    #cc00cc 30%,
+    #ccccff 40%,
+    #00ffff 50%,
+    #ccccff 60%,
+    #cc00cc 70%,
+    #cc00ff 80%,
+    #66ffff 90%,
+    blue 100%
+  );
+  -webkit-text-fill-color: transparent; /* 将字体设置成透明色 */
+  -webkit-background-clip: text; /* 裁剪背景图，使文字作为裁剪区域向外裁剪 */
+  -webkit-background-size: 200% 100%;
+  // -webkit-animation: masked-animation 4s linear infinite;
+  font-size: 35px;
+  margin-right: 16px;
+}
+// @keyframes masked-animation {
+//   0% {
+//     background-position: 0 0;
+//   }
+//   100% {
+//     background-position: -100% 0;
+//   }
+// }
+.menu-wrap {
+  position: relative;
+  cursor: pointer;
+  #menu-circle {
+    width: 100px;
+    height: 100px;
+    transform: scale(0.9);
+    // position: absolute;
+    .circle {
+      transition: stroke-dashoffset 1s ease-out;
     }
-    .nav-item {
-      // width: 300px;
-      max-height: 400px;
-      overflow: hidden;
-      .nav-title {
-        font-weight: 800;
+  }
+  .burger-wrap {
+    width: 35px;
+    height: 36px;
+    top: 33px;
+    left: 33px;
+    position: absolute;
+    .burger {
+      width: 100%;
+      height: 4px;
+      background-color: #fff;
+      margin-top: 15px;
+      border-radius: 20px;
+      position: relative;
+      transition: 0.3s;
+      transition-timing-function: ease-out;
+      &::before,
+      &::after {
+        background: #fff;
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 4px;
+        border-radius: 20px;
+        transition: 0.3s;
+        transition-timing-function: ease-in-out;
+      }
+      &::before {
+        left: 0;
+        top: -10px;
+      }
+      &::after {
+        right: 0;
+        top: 10px;
+      }
+      &.open {
+        background-color: transparent;
+      }
+      &.open::before {
+        // width: 100%;
+        transform: rotate(45deg) translateY(7px) translateX(7px);
+      }
+      &.open::after {
+        // width: 100%;
+        transform: rotate(-45deg) translateY(-7px) translateX(7px);
+      }
+      &.black,
+      &.black::after,
+      &.black::before {
+        background-color: #313131;
+      }
+    }
+    &:hover {
+      .burger {
+        &::before,
+        &::after {
+          width: 50%;
+        }
+      }
+      .burger.open {
+        &::before,
+        &::after {
+          width: 100%;
+        }
       }
     }
   }
-  .right-main-con {
-    position: relative;
-    // flex: auto;
-    width: 65%;
-    margin-left: 5%;
-    .content-bg {
-      float: right;
-      width: 40%;
-      height: 300px;
-      border-radius: 200px;
-      // shape-outside: circle();
-      filter: grayscale(80%);
-      shape-outside: content-box;
-      background-position: center; 
-      background-repeat: no-repeat;
+}
+
+.works_order {
+  position: absolute;
+  top: 130px;
+  left: 40px;
+  .order_circle {
+    font-size: 0;
+    padding: 5px;
+    margin-left: -5px;
+    margin-bottom: -5px;
+    margin-top: -5px;
+    cursor: pointer;
+    &:hover .hover-circle {
+      opacity: 1;
+      width: auto;
+      height: 16px;
+      color: #000;
+      transform: translateY(-18%) translateX(-6px);
+      padding: 0 9px;
     }
-    .main-title {
-      font-size: 45px;
-      font-weight: bolder;
-      text-decoration: underline;
-      text-decoration-color: #ffef00;
+    &:hover .circle {
+      color: #000;
+      background: #000;
+      border-color: #fff;
     }
-    .main-subtitle {
-      margin-top: 16px;
-      color: #686b6d;
+    span {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      cursor: pointer;
+      transition: 0.2s;
+      background: #fff;
+      box-sizing: content-box;
     }
-    .main-content {
-      position: relative;
-      // padding: 32px 40% 0px 32px;
-      // background-image: url($images+"home_map.jpeg");
+    .hover-circle {
+      opacity: 0;
+      display: inline-block;
+      position: absolute;
+      overflow: hidden;
+      left: 0;
+      width: 0px;
+      height: 0px;
+      border-radius: 25px;
+      transform: translate(0);
+      background: #fff;
+      font-weight: bold;
+      z-index: -1;
+      color: transparent;
+      font-size: 12px;
+      text-align: center;
+      /* display: inline-block; */
+      line-height: 16px;
+      text-indent: 14px;
+      letter-spacing: 1px;
+      font-family: AvantGarde_Thin;
+      transition: 0.2s ease-in-out;
+      white-space: nowrap;
     }
   }
+  .order_line {
+    width: 1px;
+    height: 5vh;
+    background-color: transparent;
+    margin-top: 0;
+    margin-left: 5px;
+  }
+  .current_works {
+    width: 15px;
+    height: 15px;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    background-color: #fff;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    vertical-align: middle;
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    pointer-events: none;
+  }
+}
+
+.full_screen {
+  width: 100%;
+  height: 100%;
+}
+.icon-arrow-2 {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  text-align: center;
+  margin: 0 auto;
+  color: #000;
+  font-size: 0.7em;
+  &::before {
+    content: "V";
+  }
+}
+
+//  <!-- 引导页 -->
+.index_box {
+  position: relative;
+  z-index: 5;
+  flex: auto;
+}
+.index_box.hide_index {
+  margin-top: -100%;
+  transition: margin 1s;
+}
+.index_box #index_video {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background: url($assets_path+"images/video_default.jpg") no-repeat;
+  background-size: cover;
+}
+.slash_bg {
+  background: url($assets_path+"images/slash.png");
+  position: absolute;
+  z-index: 4;
+  box-sizing: border-box;
+  padding: 2.5%;
+}
+.index_box h1.line {
+  font-family: "AvantGarde_BT";
+  font-size: 5.5em;
+  line-height: 1.2;
+  color: #fff;
+  text-align: center;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  margin-left: -50%;
+  margin-top: -2em;
+  // opacity: 0;
+  position: absolute;
+  /*margin-top: -1.5em;*/
+}
+.adj {
+  font-style: italic;
+  border-bottom: 7px solid #fff;
+}
+
+.typed-cursor {
+  opacity: 1;
+
+  animation: blink 0.7s infinite;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.index_box h1 span.title {
+  font-family: "AvantGarde_EX_light";
+  font-size: 0.25em;
+  color: #fff;
+  letter-spacing: 2px;
+  text-align: center;
+  margin: 0 auto;
+  padding: 3em;
+  display: block;
+}
+
+.index_box h1 span.title.for-all {
+  padding-top: 1.5em;
+}
+
+.index_box .arrow_box {
+  display: block;
+  width: 100px;
+  height: 100px;
+  margin: 0 auto;
+  position: absolute;
+  bottom: 80px;
+  left: 50%;
+  margin-left: -50px;
+}
+
+.index_box .arrow_box .arrow-wrap {
+  width: 70px;
+  height: 70px;
+
+  border-radius: 50%;
+  display: inline-block;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+
+  transform: translateX(-50%) translateY(-50%);
+  overflow: hidden;
+}
+
+.index_box svg {
+  width: 100px;
+  height: 100px;
+  position: absolute;
+
+  transition: 0.5s;
+
+  transition-timing-function: cubic-bezier(0, 0.98, 0.485, 1);
+}
+
+.index_box .icon-arrow {
+  color: #fff;
+  font-size: 2em;
+  position: absolute;
+  left: 50%;
+  /*-webkit-transition: 0.4s;
+            transition: 0.4s;*/
+  margin-left: -0.5em;
+  top: 50%;
+  margin-top: -0.5em;
+  /*-webkit-transition-timing-function: cubic-bezier(0.000, 0.980, 0.485, 1.000);
+            transition-timing-function: cubic-bezier(0.000, 0.980, 0.485, 1.000);*/
+  &::after {
+    content: "V";
+  }
+}
+
+.index_box .arrow_box:hover svg {
+  transform: scale(1.2, 1.2);
+}
+
+.index_box .arrow_box:hover .icon-arrow {
+  animation: scroll 0.7s ease-in-out;
+}
+
+@keyframes scroll {
+  0% {
+    top: 50%;
+  }
+  50% {
+    top: 200%;
+  }
+  51% {
+    top: -50%;
+  }
+  100% {
+    top: 50%;
+  }
+}
+
+//  <!-- 菜单页 -->
+.main_menu {
+  background-color: #1c1d24;
+  // position: fixed;
+  // top: 0;
+  // left: 0;
+  // z-index: 100;
+  -webkit-backface-visibility: hidden;
+  transition: transform 0.5s;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 5;
+}
+
+.main_menu.not_show {
+  transform: translateX(-100%);
+}
+.main_menu.menu_show {
+  transform: translateX(0%);
+}
+
+.main_menu .main_menu_center {
+  position: absolute;
+  top: 55%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+}
+
+.main_menu .icon-arrow-2 {
+  transform: rotate(-90deg) translateY(-50%);
+  font-size: 18px;
+  position: absolute;
+  right: -80px;
+  top: -2px;
+  opacity: 1;
+  color: #1c1d24;
+  transition: 0.2s ease-in-out;
+  &::before {
+    content: "V";
+  }
+}
+
+.main_menu .m_btn {
+  display: none;
+}
+
+.arrow_left_box {
+  display: block;
+  width: 100px;
+  height: 100px;
+  position: relative;
+  box-sizing: border-box;
+  margin-top: 2em;
+  margin-right: 2em;
+}
+
+.arrow_left_box svg {
+  width: 100%;
+  height: 100%;
+}
+
+.arrow_left_box .icon-arrow {
+  font-size: 2em;
+  position: absolute;
+  top: 32px;
+  left: 37px;
+  color: #fff;
+  transform: rotate(-90deg);
+}
+
+.main_menu ul {
+  width: 266px;
+  height: 43%;
+  margin: 0 auto 0 auto; /*t10em*/
+  /*background-color: red;*/
+}
+
+.main_menu ul li {
+  position: relative;
+}
+
+.main_menu ul li a {
+  display: block;
+  color: #fff;
+  font-family: "AvantGarde_EX_light";
+  font-size: 1.25em;
+  height: 75px;
+  line-height: 75px;
+  text-align: center;
+  /*border-bottom: 1px solid #38383f;*/
+  letter-spacing: 0.1em;
+  /*position: relative;*/
+  transition: color 0.3s ease-in-out;
+}
+
+.main_menu ul li a:hover {
+  color: #ad2d07;
+}
+
+.main_menu ul li a:hover .icon-arrow-2 {
+  right: -100px;
+  /* opacity: 0.99; */
+  /* display: none; */
+  /* z-index: 100; */
+  color: #ad2d07;
+}
+
+span.menu-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 20%;
+  opacity: 0;
+  font-weight: bold;
+  width: 60%;
+}
+
+.main_menu ul li a .left-bar {
+  display: block;
+  border-bottom: 1px solid #38383f;
+  width: 0%;
+  z-index: 3;
+  position: absolute;
+  bottom: 0;
+}
+
+.main_menu ul li a:nth-child(even) .left-bar {
+  border: 0;
+}
+
+.main_menu ul li a .right-bar {
+  display: block;
+  border-bottom: 1px solid #38383f;
+  width: 0%;
+  position: absolute;
+  z-index: 2;
+  right: 0;
+  bottom: 0;
+}
+
+.main_menu.menu_show {
+  ul li a .right-bar,
+  ul li a .left-bar {
+    width: 100%;
+    transition: width 2s;
+  }
+  span.menu-title {
+    top: 0%;
+    opacity: 1;
+    transition: top 2s;
+  }
+}
+
+.main_menu .to_socialmedia_box {
+  width: 266px;
+  /*height: 70px;*/
+  margin: 50px auto;
+  /*background-color: red;*/
+  box-sizing: border-box;
+  /*margin-top: 10px;*/
+  display: flex;
+}
+
+.main_menu .to_socialmedia_box div {
+  // opacity: 0;
+  margin-top: 10px;
+}
+
+.main_menu .to_socialmedia_box a {
+  display: block;
+  width: 70px;
+  height: 70px;
+  /*background-color: blue;*/
+  position: relative;
+  margin: 0 9px;
+}
+
+.main_menu .to_socialmedia_box a svg {
+  width: 100%;
+  height: 100%;
+  /*-webkit-transition: -webkit-transform 0.3s ease-in-out , opacity 0.3s;
+       -moz-transition: -moz-transform 0.3s ease-in-out , opacity 0.3s;
+         -o-transition: -o-transform 0.3s ease-in-out , opacity 0.3s;
+            transition: transform 0.3s ease-in-out , opacity 0.3s;*/
+}
+
+svg.hover-og {
+  position: absolute;
+}
+
+.main_menu .icon_style {
+  color: #8e8e92;
+  font-size: 1.6em;
+  position: absolute;
+  bottom: 29%;
+  left: 33%;
+  /*-webkit-transition: -webkit-transform 0.5s ease-in-out ,color 0.5s ease-in-out;
+       -moz-transition: -moz-transform 0.5s ease-in-out ,color 0.5s ease-in-out;
+         -o-transition: -o-transform 0.5s ease-in-out ,color 0.5s ease-in-out;
+            transition: transform 0.5s ease-in-out ,color 0.5s ease-in-out;*/
+}
+
+/*.main_menu .to_socialmedia_box a:hover svg{
+    opacity: 0;
+    transform: scale(0);
+}*/
+.main_menu .to_socialmedia_box a:hover .icon_style {
+  /*transform: scale(1.25);
+    color:#E85600;*/
+  /*color:#a3381a;*/
+}
+
+.main_menu .to_socialmedia_box a:hover .icon_style.icon_youtube {
+  color: #ca1b1f;
 }
 </style>
 
