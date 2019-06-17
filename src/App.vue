@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { getItem, setItem } from "@/utils/storage";
+import { getItem, setItem, removeItem } from "@/utils/storage";
 import { infoApi } from "@/api/login";
 import { findApplyApi, allowJoinFriendApi, ignoreApplyApi } from "@/api/chat";
 // import socket from "@/utils/socket";
@@ -77,6 +77,7 @@ export default {
           })
           .catch(() => {
             this.isAutoLogin = false;
+            removeItem("my_token", true);
           });
       }
     },

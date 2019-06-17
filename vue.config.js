@@ -10,6 +10,14 @@ module.exports = {
     outputDir: 'web',
     // publicPath: '/web/', // 部署应用包时的基本 URL。
     chainWebpack: config => {
+
+        // 添加别名
+        config.resolve.alias
+            .set('Nav', resolve('src/views/navigation'))
+            .set('View', resolve('src/views'))
+            .set('Component', resolve('src/components'))
+            .set('Api', resolve('src/api'))
+            .set('Utils', resolve('src/utils'))
         // 修改svg loader
         config.module
             .rule('svg')
@@ -28,7 +36,7 @@ module.exports = {
                 symbolId: 'icon-[name]'
             })
             .end();
-        
+
         // 添加打包分析模式
         if (process.env.npm_config_report) {
             config

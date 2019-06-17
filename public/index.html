@@ -1,20 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <link rel="icon" href="<%= BASE_URL %>logo.ico">
-    <title>awesome</title>
-  </head>
-  <body>
-    <noscript>
-      <strong>We're sorry but awesome doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
-    </noscript>
-    <script>
-      window.GLOBAL = {};
-    </script>
-    <div id="app"></div>
-    <!-- built files will be auto injected -->
-  </body>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <link rel="icon" href="<%= BASE_URL %>logo.ico">
+  <title>awesome</title>
+</head>
+
+<body>
+  <noscript>
+    <strong>We're sorry but awesome doesn't work properly without JavaScript enabled. Please enable it to
+      continue.</strong>
+  </noscript>
+  <div class="loading" style="height: 100%; display: flex; align-items: center; justify-content: center;">
+    <p style="color: #222; font-size: 0.8rem;">loading……</p>
+  </div>
+  <script>
+    window.GLOBAL = {};
+    document.onreadystatechange = function () {
+      // if (document.readyState == 'complete') {
+      //   var ele = document.getElementById('loading');
+      //   ele.parentElement.removeChild(ele);
+      // }
+    }
+  </script>
+  <div id="app"></div>
+  <!-- built files will be auto injected -->
+</body>
+
 </html>
