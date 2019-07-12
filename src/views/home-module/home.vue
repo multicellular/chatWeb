@@ -167,7 +167,7 @@ $assets_path: "../../assets/";
   width: 100%;
   height: 100%;
   z-index: -1;
-  // background: url($assets_path+"images/video_default.jpg") no-repeat;
+  background: url($assets_path+"images/video_default.jpg") no-repeat;
   background-size: cover;
 }
 
