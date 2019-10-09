@@ -1,5 +1,5 @@
 class Web_Socket {
-    wsurl = 'ws:www.lovepean.xyz:3001';
+    wsurl = 'ws:49.235.114.14:3001';
     // wsurl = 'ws:localhost:3001';
     path;
     constructor(path) {
