@@ -18,7 +18,7 @@
         <div class="oauth-con">
           <div class="oauth-tip">请选择快捷登录方式</div>
           <div class="oauth-content">
-            <a class="r-oauth" href="http://49.235.114.14:3000/api/github_oauth">
+            <a class="r-oauth" href="http://uknow.xyz:3000/api/github_oauth">
               <img src="@/assets/images/github.png" class="oauth-icon">
               <span class="oauth-label">GitHub</span>
             </a>
