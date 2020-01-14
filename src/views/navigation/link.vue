@@ -6,12 +6,12 @@
         <span class="hover-circle">HOME</span>
       </div>
       <div class="order_line"></div>
-      <div class="order_circle" data-id="1" data-type="case" data-case="1" @click="$route.push('/chat')">
+      <div class="order_circle" data-id="1" data-type="case" data-case="1" @click="$router.push('/chat')">
         <span class="circle"></span>
         <span class="hover-circle">CHAT</span>
       </div>
       <div class="order_line"></div>
-      <div class="order_circle" data-id="2" data-type="case" data-case="2" @click="$route.push('/blog')">
+      <div class="order_circle" data-id="2" data-type="case" data-case="2" @click="$router.push('/blog')">
         <span class="circle"></span>
         <span class="hover-circle">BLOG</span>
       </div>

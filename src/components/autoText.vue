@@ -1,6 +1,6 @@
 <template>
   <div>
-    <span class="computeSpan" ref="computeSpan" >{{text}}</span>
+    <span class="computeSpan" ref="computeSpan">{{text}}</span>
     <div class="auto" v-if="isReady" :style="textStyle">{{text}}</div>
   </div>
 </template>
@@ -19,11 +19,11 @@ export default {
     const width = this.$refs.computeSpan.getBoundingClientRect().width;
     // console.log(this.$refs.computeSpan.getBoundingClientRect());
     const steps = this.text.length;
-    const duration = this.text.length/26 * 3;
+    const duration = (this.text.length / 26) * 3;
     this.textStyle = {
-      width: width + "px",
-      'animation-timing-function': `steps(${steps}, end), step-end`,
-      'animation-duration': `${duration}s, 0.3s`
+      width: width + 20 + "px",
+      "animation-timing-function": `steps(${steps}, end), step-end`,
+      "animation-duration": `${duration}s, 0.3s`
     };
     this.isReady = true;
   }

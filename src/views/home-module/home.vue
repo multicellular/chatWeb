@@ -3,11 +3,10 @@
     <!-- 导航页 -->
     <header class="header-wrapper">
       <div class="nav-container">
-        <nav-link class="link"/>
-        <nav-menu/>
-        <div class="logo">SHARE</div>
-        <span v-if="user.hasInfo">{{user.userInfo && user.userInfo.name}}</span>
-        <span v-else @click="goRoute('/login')">登陆/注册</span>
+        <nav-link class="link" />
+        <nav-menu />
+        <div class="logo">{{user.userInfo && user.userInfo.name ? user.userInfo.name:'SHARE'}}</div>
+        <span @click="goRoute('/login')">登陆/注册</span>
       </div>
     </header>
     <!-- 引导页 -->
@@ -17,7 +16,7 @@
         <AutoText text="what should we do" class="auto-text"></AutoText>
         <a class="arrow_box" href="javascript:;" id="scrollBtn">
           <svg>
-            <circle cx="50" cy="50" r="30" stroke="#fff" stroke-width="2" fill="none"></circle>
+            <circle cx="50" cy="50" r="30" stroke="#fff" stroke-width="2" fill="none" />
           </svg>
         </a>
       </div>
@@ -182,7 +181,7 @@ $assets_path: "../../assets/";
 }
 
 .slash_bg .auto-text {
-  font-size: 30px;
+  font-size: 26px;
 }
 
 .slash_bg .arrow_box {
